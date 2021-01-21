@@ -3,7 +3,9 @@
 
 This is the repository for the SN + NDA + QMC + GMRES stuff
 
-If you're not Ryan or one of his students, go away.
+This repo is part of the [CEMeNT](https://cement-psaap.github.io) project
+
+If you're not a CEMeNTer, go away.
 
 ## Contents
 
