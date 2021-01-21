@@ -16,5 +16,6 @@ include("source_iteration.jl")
 include("transport_sweep.jl")
 include("sn_init.jl")
 include("sn_tabulate.jl")
+include("flux_map.jl")
 end
 

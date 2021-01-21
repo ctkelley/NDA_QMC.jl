@@ -1,4 +1,4 @@
-function sn_init(nx, na2, s, angles, method = :new)
+function sn_init(nx, na2, s, angles, weights, method = :new)
 tau=5.0; dx=tau/(nx-1);
 na=floor(Int,na2/2)
 x=collect(0:dx:tau);
@@ -13,5 +13,6 @@ else
 psi=zeros(na2,nx)
 end
 return sn_data=(c=c, dx=dx, psi=psi, angles=angles, method=method,
+  weights=weights,
   source=source, psi_right=psi_right, psi_left=psi_left, ptmp=ptmp)
 end
