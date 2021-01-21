@@ -33,7 +33,7 @@ phi=zeros(nx,)
 flux=zeros(nx,)
 ithist=[]
 while itt < 200 && delflux > 1.e-8
-   flux=flux_map!(flux,psi_left,psi_right,sn_data)
+   flux=flux_map!(flux,sn_data)
    delflux=norm(flux-phi,Inf); itt=itt+1;
    push!(ithist,delflux)
    phi.=flux;

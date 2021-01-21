@@ -1,13 +1,15 @@
 """
-transport_sweep!(psi, phi, psi_left, psi_right, sn_data)
+transport_sweep!(psi, phi, sn_data)
 
 Take a single transport sweep.
 """
-function transport_sweep!(psi, phi, psi_left, psi_right, sn_data)
+function transport_sweep!(psi, phi, sn_data)
 
 angles=sn_data.angles
 method = sn_data.method
 source = sn_data.source
+psi_right=sn_data.psi_right
+psi_left=sn_data.psi_left
 #
 ptmp=sn_data.ptmp
 c=sn_data.c;
