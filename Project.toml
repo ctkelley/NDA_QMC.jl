@@ -1,4 +1,5 @@
 [deps]
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 SIAMFANLEquations = "084e46ad-d928-497d-ad5e-07fa361a48c4"

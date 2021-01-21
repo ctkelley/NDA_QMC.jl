@@ -1,23 +1,18 @@
 """
-transport_sweep!(psi, phi, psi_left, psi_right, angles, source, 
-              sweep_data)
+transport_sweep!(psi, phi, psi_left, psi_right, sn_data)
 
 Take a single transport sweep.
 """
-#function transport_sweep!(psi, phi, psi_left, psi_right, angles, source, 
-#              sweep_data)
-function transport_sweep!(psi, phi, source, sn_data)
+function transport_sweep!(psi, phi, psi_left, psi_right, sn_data)
 
-psi_right=sn_data.psi_right
-psi_left=sn_data.psi_left
 angles=sn_data.angles
 method = sn_data.method
+source = sn_data.source
 #
 ptmp=sn_data.ptmp
 c=sn_data.c;
 dx=sn_data.dx;
 #
-q=source;
 na2=length(angles);
 na=floor(Int,na2/2);
 nx=length(phi);
@@ -35,7 +30,7 @@ end
 #
 #
 #
-source_total = .5*c.*phi + q;
+source_total = .5*c.*phi + source;
 @views source_average=(source_total[2:nx]+source_total[1:nx-1])*.5;
 @views forward_angles=angles[na+1:na2];
 @views backward_angles=angles[1:na];
