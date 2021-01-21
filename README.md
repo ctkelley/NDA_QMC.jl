@@ -11,7 +11,7 @@ If you're not Ryan or one of his students, go away.
 
 
 ## Dependencies:
-- SIAMFANLEquations
+- [SIAMFANLEquations.jl](https://github.com/ctkelley/SIAMFANLEquations.jl)
   - You need v 0.3.0 or higher. As of today, you have to get it from the pkg REPL with 
   
   ```add https://github.com/ctkelley/SIAMFANLEquations.jl#master```
