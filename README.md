@@ -9,8 +9,8 @@ If you're not a CEMeNTer, go away.
 
 ## Contents
 
-- [Dependencies](#Dependencies:) get these packages first
-- [Problems?](#Problems:)
+- [Dependencies](#Dependencies) get these packages first
+- [Problems?](#Problems)
 
 
 ## Dependencies:
