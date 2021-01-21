@@ -7,7 +7,8 @@ If you're not Ryan or one of his students, go away.
 
 ## Contents
 
-- [Dependencies](#Dependencies): get these packages first
+- [Dependencies](#Dependencies:) get these packages first
+- [Problems?](#Problems:)
 
 
 ## Dependencies:
@@ -19,3 +20,6 @@ If you're not Ryan or one of his students, go away.
      because I have not pushed 0.3.0 yet.
 
 - FastGaussQuadrature
+
+## Problems
+If you're Ryan or one of this students, you know how to find me. Otherwise ... go away.
