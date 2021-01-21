@@ -17,16 +17,6 @@ method=:new
 #
 (angles, weights) = sn_angles(na2)
 sn_data=sn_init(nx,na2,s,angles,weights,method)
-#
-# Problem data
-#
-c=sn_data.c
-psi_right=sn_data.psi_right
-psi_left=sn_data.psi_left
-psi=sn_data.psi
-#
-# Source iteration
-#
 itt=0;
 delflux=1;
 phi=zeros(nx,)
@@ -42,5 +32,5 @@ end
 # Tabulate the exit distributions to check results.
 #
 tout=sn_tabulate(s,nx,flux)
-return(left=tout.left, right=tout.right, history=ithist)
+return(left=tout.left, right=tout.right, flux=flux, history=ithist)
 end
