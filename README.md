@@ -1,4 +1,6 @@
 # NDA_QMC.jl
+# Open the notebook __NDA.ipynb__ to see what to do.
+
 This is the repository for the SN + NDA + QMC + GMRES stuff
 
 If you're not Ryan or one of his students, go away.
