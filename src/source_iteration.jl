@@ -1,5 +1,5 @@
 """
- source_iteration(na2=20, s=Inf)
+ source_iteration(sn_data,s,tol)
  Source iteration example script for transport equation.
 
  This is one of the test cases from
@@ -9,28 +9,29 @@
  JQSRT (27), 1982 pp 141-148.
 
 """
-function source_iteration(na2=20, s=Inf)
-nx=2001
-method=:new
-#
-# precomputed data
-#
-(angles, weights) = sn_angles(na2)
-sn_data=sn_init(nx,na2,s,angles,weights,method)
-itt=0;
-delflux=1;
-phi=zeros(nx,)
-flux=zeros(nx,)
-ithist=[]
-while itt < 200 && delflux > 1.e-8
-   flux=flux_map!(flux,sn_data)
-   delflux=norm(flux-phi,Inf); itt=itt+1;
-   push!(ithist,delflux)
-   phi.=flux;
-end
-#
-# Tabulate the exit distributions to check results.
-#
-tout=sn_tabulate(s,nx,flux)
-return(left=tout.left, right=tout.right, flux=flux, history=ithist)
+function source_iteration(sn_data,s,tol=1.e-8)
+    nx = 2001
+    #
+    # precomputed data
+    #
+    angles=sn_data.angles
+    weihts=sn_data.weights
+    itt = 0
+    delflux = 1
+    phi = zeros(nx)
+    flux = zeros(nx)
+    reshist = []
+    while itt < 200 && delflux > tol
+        flux = flux_map!(flux, sn_data)
+        delflux = norm(flux - phi, Inf)
+        itt = itt + 1
+        push!(reshist, delflux)
+        phi .= flux
+    end
+    #
+    # Tabulate the exit distributions to check results.
+    #
+    tout = sn_tabulate(s, nx, flux)
+    return (left = tout.left, right = tout.right, 
+                flux = flux, history= reshist)
 end
