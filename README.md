@@ -23,5 +23,9 @@ If you're not a CEMeNTer, go away.
 
 - FastGaussQuadrature
 
+- LaTeXStrings
+
+- PyPlot
+
 ## Problems
 If you're Ryan or one of this students, you know how to find me. Otherwise ... go away.
