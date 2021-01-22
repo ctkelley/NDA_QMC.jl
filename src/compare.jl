@@ -15,14 +15,13 @@ sn_data.psi_left .*=0.0
 sn_data.psi_right .*=0.0
 kf=copy(fout)
 kf=flux_map!(kf,sn_data)
-plot(fout-kf-rhs)
 f0=zeros(size(fout))
 V=zeros(nx,20)
 gout=kl_gmres(f0, rhs, sn_matvec, V, 1.e-10; pdata=sn_data);
 fgm=gout.sol
-figure(1)
-plot(fout-fgm)
-figure(2)
+#figure(1)
+#plot(fout-fgm)
+#figure(2)
 snhist=sout.history./sout.history[1]
 ghist=gout.reshist./gout.reshist[1]
 semilogy(ghist,"k-",snhist,"k--")
