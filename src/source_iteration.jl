@@ -31,8 +31,5 @@ function source_iteration(sn_data,s,tol=1.e-8)
     #
     # Tabulate the exit distributions to check results.
     #
-#    tout = sn_tabulate(s, nx, flux)
-#    return (left = tout.left, right = tout.right, 
-#                flux = flux, history= reshist)
     return ( flux = flux, history= reshist)
 end

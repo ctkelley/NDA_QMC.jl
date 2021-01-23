@@ -34,5 +34,5 @@ function compare(s = 1.0)
     solverdelta=norm(fout - fgm, Inf)
     (solverdelta < 1.e-6) || error("results not the same")
     sn_tabulate(s,nx,fgm)
-    println(norm(fout - fgm, Inf))
+    println("Norm of result difference = ", norm(fout - fgm, Inf))
 end
