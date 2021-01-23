@@ -31,5 +31,8 @@ function compare(s = 1.0)
     # sanity check. The difference in solutions should be consistent
     # with the tolerances.
     fgm=gout.sol
+    solverdelta=norm(fout - fgm, Inf)
+    (solverdelta < 1.e-6) || error("results not the same")
+    sn_tabulate(s,nx,fgm)
     println(norm(fout - fgm, Inf))
 end
