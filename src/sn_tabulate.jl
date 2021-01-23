@@ -16,6 +16,8 @@ function sn_tabulate(s, nx, flux)
     sn_data = sn_init(nx, na2, s, angleout, weights)
     psi = sn_data.psi
     psi = transport_sweep!(psi, flux, sn_data)
+    header = " mu         I(0,-mu)        I(tau,mu)"
+    @printf("%s \n", header)
     for it=1:na
     @printf("%5.2f %15.5e %15.5e \n", 
            angleout[it+na], psi[it,1], psi[na+it,nx])

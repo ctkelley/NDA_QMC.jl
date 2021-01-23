@@ -32,7 +32,4 @@ function compare(s = 1.0)
     # with the tolerances.
     fgm=gout.sol
     println(norm(fout - fgm, Inf))
-    #
-    # Tabulate the results to compare with the Garcia/Siewert paper
-    #
 end
