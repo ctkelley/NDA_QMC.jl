@@ -1,5 +1,5 @@
 # NDA_QMC.jl
-# Open the notebook __NDA.ipynb__ to see what to do.
+# Open the notebook __NDA_Notebook.ipynb__ to see what to do.
 
 This is the repository for the SN + NDA + QMC + GMRES stuff
 
@@ -18,7 +18,7 @@ If you're not a CEMeNTer, go away.
 - Clone this repo
 - Install the dependencies
 - Fire up __IJulia__ and cd to the directory where you put the repo
-- Open the notebook __NDA.ipynb__
+- Open the notebook __NDA_Notebook.ipynb__
 - Do a ```run all``` this will run __nda_note.jl__ which gets the dependencies organized and puts the right things in your load path
 - You are now ready to mess with the sovlers. Right now all that I have in the notebook is __compare.jl__. The other codes in the /src directory
   are pretty well documented and ready for you to play with.
