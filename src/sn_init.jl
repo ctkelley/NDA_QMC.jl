@@ -1,5 +1,5 @@
 """
-sn_init(nx, na2, s, angles, weights)
+sn_init(nx, na2, s)
 
 I pass a named tuple of precomputed and preallocated data to
 all the functions and solvers. 
@@ -15,7 +15,13 @@ s = parameter in Garcia/Siewert
 
 angles, weights = nodes and weights for the angular quadrature
 """
-function sn_init(nx, na2, s, angles, weights)
+function sn_init(nx, na2, s; siewert=false)
+    if siewert
+    angles = [-.05; collect(-.1:-.1:-1.0); 0.05; collect(0.1:0.1:1.0)]
+    weights = angles
+    else
+    (angles, weights) = sn_angles(na2)
+    end
     tau = 5.0
     dx = tau / (nx - 1)
     na = floor(Int, na2 / 2)

@@ -4,8 +4,9 @@ function compare(s = 1.0)
     #
     # precomputed data
     #
-    (angles, weights) = sn_angles(na2)
-    sn_data = sn_init(nx, na2, s, angles, weights)
+#    (angles, weights) = sn_angles(na2)
+#    sn_data = sn_init(nx, na2, s, angles, weights)
+    sn_data = sn_init(nx, na2, s)
     #
     # do source iteration
     #

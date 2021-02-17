@@ -13,7 +13,8 @@ function sn_tabulate(s, nx, flux)
     #
     na2 = length(angleout)
     na = floor(Int, na2 / 2)
-    sn_data = sn_init(nx, na2, s, angleout, weights)
+#    sn_data = sn_init(nx, na2, s, angleout, weights)
+    sn_data = sn_init(nx, na2, s; siewert=true)
     psi = sn_data.psi
     psi = transport_sweep!(psi, flux, sn_data)
     header = " mu         I(0,-mu)        I(tau,mu)"

@@ -34,7 +34,6 @@ function transport_sweep!(psi, phi, sn_data)
     vfl = (forward_angles / dx) .+ 0.5
     vfl = 1.0 ./ vfl
     vfr = (forward_angles / dx) .- 0.5
-    dfr = Diagonal(vfr)
     #
     # Forward sweep
     #

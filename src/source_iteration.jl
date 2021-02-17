@@ -1,5 +1,5 @@
 """
- source_iteration(sn_data,s,tol)
+ source_iteration(sn_data,s,tol=1.e-8)
  Source iteration example script for transport equation.
 
  This is one of the test cases from
