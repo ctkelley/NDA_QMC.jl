@@ -46,7 +46,7 @@ QMC_Sweep:
         sigt:
             Scalar value, total macroscopic cross section
         c:
-            Scattering cross section varies with exp(x/c)
+            Scattering cross section varies with exp(-x/c)
         phi_avg:
             Optional input. Defaults to zeros(Nx)
 
@@ -98,7 +98,6 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
             phi_avg[zone] += score_TL
             J_avg[zone]   += score_TL*mu
             phi_s[zone] += (weight*exp(-x/c))*(1 - exp(-(ds*(sigt[zone] + mu/c))))/(sigt[zone] + mu/c)/dxs[zone] #weighted average version
-            #J_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone]*mu
         else
             score_TL       = weight*ds/dxs[zone] #implicit capture for track-length
             phi_avg[zone] += score_TL
@@ -119,7 +118,6 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
                 phi_avg[z_prop] += score_TL
                 J_avg[z_prop]   += score_TL*mu
                 phi_s[z_prop] += (weight*exp(-low_edges[z_prop]/c))*(1 - exp(-(ds_zone*(sigt[z_prop] + mu/c))))/(sigt[z_prop] + mu/c)/dxs[z_prop]
-                #J_avg[z_prop] += weight*(1 - exp(-(ds*sigt[z_prop])))/sigt[z_prop]/dxs[z_prop]*mu
                 s += ds_zone
             else
                 score_TL         = weight*ds_zone/dxs[z_prop] #implicit capture for track-length
@@ -143,7 +141,6 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
                 phi_avg[zone] += score_TL
                 J_avg[zone]   += score_TL*mu
                 phi_s[zone] += (weight*exp(-x/c))*(1 - exp(-(ds*(sigt[zone] + mu/c))))/(sigt[zone] + mu/c)/dxs[zone] #weighted average version
-                #J_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone]*mu
             else
                 score_TL       = weight*ds/dxs[zone] #implicit capture for track-length
                 phi_avg[zone] += score_TL
@@ -175,7 +172,6 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
             phi_avg[zone] += score_TL
             J_avg[zone]   += score_TL*mu
             phi_s[zone] += (weight*exp(-x/c))*(1 - exp(-(ds*(sigt[zone] + abs(mu)/c))))/(sigt[zone] + abs(mu)/c)/dxs[zone]
-            #J_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone]*abs(mu)
         else
             score_TL       = weight*ds/dxs[zone]
             phi_avg[zone] += score_TL
@@ -194,7 +190,6 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
                 phi_avg[z_prop] += score_TL
                 J_avg[z_prop]   += score_TL*mu
                 phi_s[z_prop] += (weight*exp(-high_edges[z_prop]/c))*(1 - exp(-(ds_zone*(sigt[z_prop] + abs(mu)/c))))/(sigt[z_prop] + abs(mu)/c)/dxs[z_prop]
-                #J_avg[z_prop] += weight*(1 - exp(-(ds*sigt[z_prop])))/sigt[z_prop]/dxs[z_prop]*abs(mu)
                 s += ds_zone
             else
                 score_TL         = weight*ds_zone/dxs[z_prop] #implicit capture for track-length
@@ -218,7 +213,6 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
                 phi_avg[zone] += score_TL
                 J_avg[zone]   += score_TL*mu
                 phi_s[zone] += (weight*exp(-x/c))*(1 - exp(-(ds*(sigt[zone] + abs(mu)/c))))/(sigt[zone] + abs(mu)/c)/dxs[zone]
-                #J_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone]*abs(mu)
             else
                 score_TL       = weight*ds/dxs[zone] #implicit capture for track-length
                 phi_avg[zone] += score_TL
