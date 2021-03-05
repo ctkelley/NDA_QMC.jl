@@ -94,18 +94,20 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
         end
         # First partial zone
         if (sigt[zone] > 1e-12)
-            phi_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone] #implicit capture for track-length
+            score_TL       = weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone] #implicit capture for track-length
+            phi_avg[zone] += score_TL
+            J_avg[zone]   += score_TL*mu
             phi_s[zone] += (weight*exp(-x/c))*(1 - exp(-(ds*(sigt[zone] + mu/c))))/(sigt[zone] + mu/c)/dxs[zone] #weighted average version
-            J_avg[zone] += phi_avg[zone]*mu
             #J_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone]*mu
         else
-            phi_avg[zone] += weight*ds/dxs[zone] #implicit capture for track-length
+            score_TL       = weight*ds/dxs[zone] #implicit capture for track-length
+            phi_avg[zone] += score_TL
+            J_avg[zone]   += score_TL*mu
             phi_s[zone] += phi_avg[zone]
-            J_avg[zone] += phi_avg[zone] *mu
         end
-        weight *= exp(-(ds*sigt[zone])) #decrease the weight
-        J_edge[zone+1] += weight
-        phi_edge[zone+1] += weight/mu #current density tally
+        weight           *= exp(-(ds*sigt[zone])) #decrease the weight
+        J_edge[zone+1]   += weight
+        phi_edge[zone+1] += weight/abs(mu)
         s += ds
 
         # Full zones
@@ -113,20 +115,22 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
         while (s+ds_zone <= s_max) && (z_prop <= Nx)
             if (sigt[z_prop] > 1e-12)
                 ds += ds_zone
-                phi_avg[z_prop] += weight*(1 - exp(-(ds_zone*sigt[z_prop])))/sigt[z_prop]/dxs[z_prop] #implicit capture for track-length
+                score_TL         = weight*(1 - exp(-(ds_zone*sigt[z_prop])))/sigt[z_prop]/dxs[z_prop] #implicit capture for track-length
+                phi_avg[z_prop] += score_TL
+                J_avg[z_prop]   += score_TL*mu
                 phi_s[z_prop] += (weight*exp(-low_edges[z_prop]/c))*(1 - exp(-(ds_zone*(sigt[z_prop] + mu/c))))/(sigt[z_prop] + mu/c)/dxs[z_prop]
-                J_avg[z_prop] += phi_avg[z_prop]*mu
                 #J_avg[z_prop] += weight*(1 - exp(-(ds*sigt[z_prop])))/sigt[z_prop]/dxs[z_prop]*mu
                 s += ds_zone
             else
-                phi_avg[z_prop] += weight*ds_zone/dxs[z_prop] #implicit capture for track-length
+                score_TL         = weight*ds_zone/dxs[z_prop] #implicit capture for track-length
+                phi_avg[z_prop] += score_TL
+                J_avg[z_prop]   += score_TL*mu
                 phi_s[z_prop] += phi_avg[z_prop]
-                J_avg[z_prop] += phi_avg[z_prop]*mu
                 s += ds_zone
             end
-            weight *= exp(-(ds_zone*sigt[z_prop]))
-            J_edge[z_prop+1] += weight
-            phi_edge[z_prop+1] += weight/mu
+            weight             *= exp(-(ds_zone*sigt[z_prop]))
+            J_edge[z_prop+1]   += weight
+            phi_edge[z_prop+1] += weight/abs(mu)
             z_prop += 1
         end
 
@@ -135,17 +139,19 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
             zone = argmax(1*((s*mu).>=low_edges).*((s*mu) .< high_edges))
             ds = s_max-s
             if (sigt[zone] > 1e-12)
-                phi_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone] #implicit capture for track-length
+                score_TL       = weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone] #implicit capture for track-length
+                phi_avg[zone] += score_TL
+                J_avg[zone]   += score_TL*mu
                 phi_s[zone] += (weight*exp(-x/c))*(1 - exp(-(ds*(sigt[zone] + mu/c))))/(sigt[zone] + mu/c)/dxs[zone] #weighted average version
-                J_avg[zone] += phi_avg[zone]*mu
                 #J_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone]*mu
             else
-                phi_avg[zone] += weight*ds/dxs[zone] #implicit capture for track-length
+                score_TL       = weight*ds/dxs[zone] #implicit capture for track-length
+                phi_avg[zone] += score_TL
+                J_avg[zone]   += score_TL*mu
                 phi_s[zone] += phi_avg[zone]
-                J_avg[zone] += phi_avg[zone]*abs(mu)
             end
-            weight *= exp(-(ds*sigt[zone])) #decrease the weight
-            J_edge[zone+1] += weight #current density tally
+            weight           *= exp(-(ds*sigt[zone])) #decrease the weight
+            J_edge[zone+1]   += weight #current density tally
             phi_edge[zone+1] += weight/abs(mu)
         end
         #add to the exiting flux - find the bin and add it to that one
@@ -165,37 +171,41 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
         end
         # First partial Zone
         if (sigt[zone] > 1e-12)
-            phi_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone] #implicit capture for track-length
+            score_TL       = weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone] #implicit capture for track-length
+            phi_avg[zone] += score_TL
+            J_avg[zone]   += score_TL*mu
             phi_s[zone] += (weight*exp(-x/c))*(1 - exp(-(ds*(sigt[zone] + abs(mu)/c))))/(sigt[zone] + abs(mu)/c)/dxs[zone]
-            J_avg[zone] += phi_avg[zone]*abs(mu)
             #J_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone]*abs(mu)
         else
-            phi_avg[zone] += weight*ds/dxs[zone]
+            score_TL       = weight*ds/dxs[zone]
+            phi_avg[zone] += score_TL
+            J_avg[zone]   += score_TL*mu
             phi_s[zone] += phi_avg[zone]
-            J_avg[zone] += phi_avg[zone]*abs(mu)
         end
-        weight *= exp.(-(ds*sigt[zone]))
-        J_edge[zone] -= weight
-        phi_edge[zone] -= weight/abs(mu)
+        weight         *= exp.(-(ds*sigt[zone]))
+        J_edge[zone]   -= weight
+        phi_edge[zone] += weight/abs(mu)
         s += ds
         # Full zones
         z_prop = zone-1
         while (s+ds_zone <= s_max) && (z_prop >= 1)
             if (sigt[z_prop] > 1e-12)
-                phi_avg[z_prop] += weight*(1 - exp(-(ds_zone*sigt[z_prop])))/sigt[z_prop]/dxs[z_prop] #implicit capture for track-length
+                score_TL         = weight*(1 - exp(-(ds_zone*sigt[z_prop])))/sigt[z_prop]/dxs[z_prop] #implicit capture for track-length
+                phi_avg[z_prop] += score_TL
+                J_avg[z_prop]   += score_TL*mu
                 phi_s[z_prop] += (weight*exp(-high_edges[z_prop]/c))*(1 - exp(-(ds_zone*(sigt[z_prop] + abs(mu)/c))))/(sigt[z_prop] + abs(mu)/c)/dxs[z_prop]
-                J_avg[z_prop] += phi_avg[z_prop]*abs(mu)
                 #J_avg[z_prop] += weight*(1 - exp(-(ds*sigt[z_prop])))/sigt[z_prop]/dxs[z_prop]*abs(mu)
                 s += ds_zone
             else
-                phi_avg[z_prop] += weight*ds_zone/dxs[z_prop] #implicit capture for track-length
+                score_TL         = weight*ds_zone/dxs[z_prop] #implicit capture for track-length
+                phi_avg[z_prop] += score_TL
+                J_avg[z_prop]   += score_TL*mu
                 phi_s[z_prop] += phi_avg[z_prop]
-                J_avg[z_prop] += phi_avg[z_prop]*abs(mu)
                 s += ds_zone
             end
-           weight *= exp(-(ds_zone*(sigt[z_prop])))
-           J_edge[z_prop] -= weight
-           phi_edge[z_prop] -= weight/abs(mu)
+           weight           *= exp(-(ds_zone*(sigt[z_prop])))
+           J_edge[z_prop]   -= weight
+           phi_edge[z_prop] += weight/abs(mu)
            z_prop -= 1
        end
 
@@ -204,18 +214,20 @@ phi_avg, phi_edge, phi_s, J_avg, J_edge,sigt,exit_right_bins, exit_left_bins, c)
             zone = argmax(1*((s*mu).>=low_edges).*((s*mu) .< high_edges))
             ds = (low_edges[zone] - s*mu)/mu
             if (sigt[zone] > 1e-12)
-                phi_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone] #implicit capture for track-length
+                score_TL       = weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone] #implicit capture for track-length
+                phi_avg[zone] += score_TL
+                J_avg[zone]   += score_TL*mu
                 phi_s[zone] += (weight*exp(-x/c))*(1 - exp(-(ds*(sigt[zone] + abs(mu)/c))))/(sigt[zone] + abs(mu)/c)/dxs[zone]
-                J_avg[zone] += phi_avg[zone]*abs(mu)
                 #J_avg[zone] += weight*(1 - exp(-(ds*sigt[zone])))/sigt[zone]/dxs[zone]*abs(mu)
             else
-                phi_edge[zone] += weight*ds/dxs[zone] #implicit capture for track-length
+                score_TL       = weight*ds/dxs[zone] #implicit capture for track-length
+                phi_avg[zone] += score_TL
+                J_avg[zone]   += score_TL*mu
                 phi_s[zone] += phi_edge[zone]
-                J_avg[zone] += phi_edge[zone]*abs(mu)
             end
-            weight *= exp.(-(ds*sigt[zone]))
-            J_edge[zone] -= weight
-            phi_edge[zone] -= weight/abs(mu)
+            weight         *= exp.(-(ds*sigt[zone]))
+            J_edge[zone]   -= weight
+            phi_edge[zone] += weight/abs(mu)
         end
         #add to the exiting flux - find the bin and add it to that one
         exit_left_bins[argmin(abs.(exit_left_bins[:,1] .- mu)),2] += weight/abs(mu)
