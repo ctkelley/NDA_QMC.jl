@@ -36,8 +36,9 @@ I run two classes of sovlers so far
 
 - Plain-vanilla source iteration and GMRES accelerated source iteration
 - NDA with Picard iteration and NDA with Newton-GMRES
+- QMC sweep functions
 
-QMC is next on the list.
+QMC solution iteration is next on the list.
 
 ## Dependencies:
 - [SIAMFANLEquations.jl](https://github.com/ctkelley/SIAMFANLEquations.jl)
@@ -52,6 +53,16 @@ QMC is next on the list.
 - PyPlot
 
 - SuiteSparse
+
+- SpecialFunctions
+
+- LinearAlgebra
+
+- Sobol
+
+- JLD2
+
+- Random
 
 
 ## Problems
