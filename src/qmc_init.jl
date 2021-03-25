@@ -1,6 +1,6 @@
 
 
-function qmc_init(Nx, na2, s)
+function qmc_init(N, Nx, na2, s)
 
     Lx = 5.0
     dx = Lx/Nx
@@ -10,9 +10,6 @@ function qmc_init(Nx, na2, s)
     dxs = high_edges - low_edges
     midpoints = 0.5*(high_edges + low_edges)
     edges = range(0, stop=Lx, length=Nx+1)
-
-    fl(mu) =  sqrt(mu)
-    fr(mu) = -sqrt(mu)
 
     #initialize sobol sequence
     rng = SobolSeq(2)
@@ -52,8 +49,29 @@ function qmc_init(Nx, na2, s)
 
     sigt = ones(Nx)*sigt
     source = source_strength*ones(Nx)
-    sigsFunc(x) = exp.(-x/c)
+    sigsFunc(x) = exp.(-x/s)
     sigs = sigsFunc(midpoints)
     q = phi_avg.*sigs .+ source
 
-    return qmc_data= ()
+    return qmc_data = (
+        Lx = Lx
+        dx = dx
+        low_edges = low_edges
+        high_edges = high_edges
+        dxs = dxs
+        midpoints = midpoints
+        edges = edges
+        rng = rng
+        dmu = dmu
+        exit_left_bins = exit_left_bins
+        exit_right_bins = exit_right_bins
+        phi_edge = phi_edge
+        dphi = dphi
+        phi_s = phi_s
+        J_avg = J_avg
+        J_edge = J_edge
+        sigt = sigt
+        source = source
+        sigs = sigs
+        q = q
+        )
