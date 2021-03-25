@@ -9,22 +9,19 @@
  JQSRT (27), 1982 pp 141-148.
 
 """
-function source_iteration(sn_data,s,tol=1.e-8)
-    nx = 2001
+function source_iteration(N, Nx, na2, s, sn_data, tol=1.e-8)
     #
     # precomputed data
     #
-    angles=sn_data.angles
-    weihts=sn_data.weights
     itt = 0
     delflux = 1
-    phi = zeros(nx)
-    flux = zeros(nx)
+    phi = zeros(Nx)
+    flux = zeros(Nx)
     reshist = []
     while itt < 200 && delflux > tol
         flux = flux_map!(flux, sn_data)
         delflux = norm(flux - phi, Inf)
-        itt = itt + 1
+        itt += 1
         push!(reshist, delflux)
         phi .= flux
     end
