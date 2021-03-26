@@ -1,4 +1,4 @@
-
+using Sobol
 
 function qmc_init(N, Nx, na2, s)
 
@@ -10,19 +10,6 @@ function qmc_init(N, Nx, na2, s)
     dxs = high_edges - low_edges
     midpoints = 0.5*(high_edges + low_edges)
     edges = range(0, stop=Lx, length=Nx+1)
-
-    #initialize sobol sequence
-    rng = SobolSeq(2)
-
-    if (N >0)
-        skip(rng,N) #skipping the expected number is suggested for Sobol
-    end
-
-    rng_bndl = 0
-    if (has_left > 0)
-        rng_bndl = SobolSeq(2)
-        skip(rng_bndl,Nb) #skipping the expected number is suggested for Sobol
-    end
 
     #define angular flux mesh
     #exit_left_bins data structure to hold the exiting angular flux,
@@ -47,31 +34,33 @@ function qmc_init(N, Nx, na2, s)
     J_avg = zeros(Nx)
     J_edge = zeros(Nx+1)
 
+    sigt = 1
     sigt = ones(Nx)*sigt
+    source_strength = 0.0
     source = source_strength*ones(Nx)
     sigsFunc(x) = exp.(-x/s)
     sigs = sigsFunc(midpoints)
-    q = phi_avg.*sigs .+ source
 
     return qmc_data = (
-        Lx = Lx
-        dx = dx
-        low_edges = low_edges
-        high_edges = high_edges
-        dxs = dxs
-        midpoints = midpoints
-        edges = edges
-        rng = rng
-        dmu = dmu
-        exit_left_bins = exit_left_bins
-        exit_right_bins = exit_right_bins
-        phi_edge = phi_edge
-        dphi = dphi
-        phi_s = phi_s
-        J_avg = J_avg
-        J_edge = J_edge
-        sigt = sigt
-        source = source
-        sigs = sigs
-        q = q
-        )
+        N = N,
+        Nx = Nx,
+        Lx = Lx,
+        dx = dx,
+        low_edges = low_edges,
+        high_edges = high_edges,
+        dxs = dxs,
+        midpoints = midpoints,
+        edges = edges,
+        dmu = dmu,
+        exit_left_bins = exit_left_bins,
+        exit_right_bins = exit_right_bins,
+        phi_edge = phi_edge,
+        dphi = dphi,
+        phi_s = phi_s,
+        J_avg = J_avg,
+        J_edge = J_edge,
+        sigt = sigt,
+        source = source,
+        sigs = sigs,
+        c = s)
+end
