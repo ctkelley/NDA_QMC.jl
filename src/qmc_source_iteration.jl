@@ -1,5 +1,5 @@
 using LinearAlgebra
-include("qmc_sweep_2.jl")
+include("qmc_sweep.jl")
 """
  qmc_source_iteration(s, qmc_data,tol=1.e-8)
  quasi-monte carlo source iteration example script for transport equation.
