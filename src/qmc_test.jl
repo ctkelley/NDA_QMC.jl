@@ -30,18 +30,18 @@ midpoints = qmc_data.midpoints
 edges = qmc_data.edges
 
 ####
-figure(figsize = (5,10))
+figure(figsize = (6,12))
 
 subplot(311)
 plot(midpoints,phi_avg)
-ylabel("phi")
+ylabel("phi midpoints")
 xlabel("midpoints")
 title("Cell Averaged Scalar Flux")
 
 # cell Averaged Spatial Derivative of Scalar Flux
 subplot(312)
 plot(edges,phi_edge)
-ylabel("phi")
+ylabel("phi edges")
 xlabel("cell edges")
 title("Cell edge Scalar Flux")
 
