@@ -9,6 +9,7 @@ using SparseArrays
 using SuiteSparse
 using PyPlot
 using Printf
+using Sobol
 
 export testgauss
 export sn_angles

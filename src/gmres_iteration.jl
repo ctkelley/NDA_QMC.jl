@@ -32,10 +32,7 @@ function gmres_iteration(sn_data,s,tol=1.e-8)
     #
     # Tabulate the exit distributions to check results.
     #
-#    tout = sn_tabulate(s, nx, sol)
-#    return (left = tout.left, right = tout.right, 
-#     sol=sol , reshist=reshist)
-     return(sol=sol , reshist=reshist)
+    return(sol=sol , reshist=reshist)
 end
 
 """
