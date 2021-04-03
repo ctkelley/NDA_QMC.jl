@@ -17,7 +17,7 @@ s = 1 #parameter in Garcia/Siewert
 # initialize qmc
 qmc_data = qmc_init(N, Nx, na2, s)
 # call qmc SI
-phi_avg, phi_edge, J_avg, J_edge, psi_right, psi_left, history, itt = qmc_source_iteration(s,qmc_data)
+phi_avg, phi_edge, dphi, J_avg, J_edge, psi_right, psi_left, history, itt = qmc_source_iteration(s,qmc_data)
 
 
 ###############################################################################
@@ -40,15 +40,15 @@ title("Cell Averaged Scalar Flux")
 
 # cell Averaged Spatial Derivative of Scalar Flux
 subplot(312)
-plot(edges,phi_edge)
-ylabel("phi edges")
-xlabel("cell edges")
-title("Cell edge Scalar Flux")
+plot(midpoints,dphi)
+ylabel("dphi")
+xlabel("cell midpoints")
+title("Cell Flux Derivative")
 
 # cell averaged current
 subplot(313)
 plot(midpoints,J_avg)
-ylabel("current")
+ylabel("J avg")
 xlabel("midpoints")
 title("Cell Averaged Current")
 
