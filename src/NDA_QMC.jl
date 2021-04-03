@@ -21,6 +21,10 @@ export compare
 export nda_iteration
 export nda_nsoli
 export nda_compare
+export siewert
+export writetab
+export readtab
+export ctk_qmc_test
 
 include("sn_angles.jl")
 include("source_iteration.jl")
@@ -32,4 +36,9 @@ include("flux_map.jl")
 include("compare.jl")
 include("nda.jl")
 include("nda_iteration.jl")
+include("siewert.jl")
+include("Tim_QMC/ctk_qmc_init.jl")
+include("Tim_QMC/ctk_qmc_test.jl")
+include("Tim_QMC/ctk_qmc_sweep.jl")
+include("Tim_QMC/ctk_qmc_source_iteration.jl")
 end
