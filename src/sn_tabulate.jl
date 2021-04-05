@@ -13,6 +13,7 @@ function sn_tabulate(s, nx, flux; maketab=true, phiedge=true)
     #
     na2 = length(angleout)
     na = floor(Int, na2 / 2)
+    phiedge ? np=nx : np=nx+1
     sn_data = sn_init(nx, na2, s; siewert=true, phiedge=phiedge)
     psi = sn_data.psi
     psi = transport_sweep!(psi, flux, sn_data; phiedge=phiedge)
@@ -21,8 +22,8 @@ function sn_tabulate(s, nx, flux; maketab=true, phiedge=true)
     @printf("%s \n", header)
     for it=1:na
     @printf("%5.2f %15.5e %15.5e \n", 
-           angleout[it+na], psi[it,1], psi[na+it,nx])
+           angleout[it+na], psi[it,1], psi[na+it,np])
     end
     end
-    return (left = psi[1:na, 1], right = psi[na+1:na2, nx])
+    return (left = psi[1:na, 1], right = psi[na+1:na2, np])
 end
