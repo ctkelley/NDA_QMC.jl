@@ -1,9 +1,9 @@
 """
-transport_sweep!(psi, phi, sn_data)
+transport_sweep!(psi, phi, sn_data; phiedge=true)
 
 Take a single transport sweep.
 """
-function transport_sweep!(psi, phi, sn_data)
+function transport_sweep!(psi, phi, sn_data; phiedge=true)
 
     angles = sn_data.angles
     source = sn_data.source
@@ -27,7 +27,11 @@ function transport_sweep!(psi, phi, sn_data)
     #
     #
     source_total = 0.5 * c .* phi + source
+    if phiedge
     @views source_average = (source_total[2:nx] + source_total[1:nx-1]) * 0.5
+    else
+    source_average=source_total
+    end
     @views forward_angles = angles[na+1:na2]
     @views backward_angles = angles[1:na]
     #

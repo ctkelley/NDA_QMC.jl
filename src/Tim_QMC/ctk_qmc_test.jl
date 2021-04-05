@@ -2,7 +2,7 @@
 #include("ckt_qmc_init.jl")
 #include("ctk_qmc_source_iteration.jl")
 
-function ctk_qmc_test(N=10^4, Nx=50, na2=11; s=1, plotme=true)
+function ctk_qmc_test(N=10^4, Nx=50, na2=11; s=1, plotme=false)
 
 ###############################################################################
 #### Inputs
@@ -25,7 +25,7 @@ if plotme
 plotqmd(phi_avg, phi_edge, J_avg, J_edge, 
                psi_right, psi_left, history, itt, qmc_data)
 end
-qmctab=sn_tabulate(s, Nx, phi_avg; maketab=false)
+qmctab=sn_tabulate(s, Nx, phi_avg; maketab=false, phiedge=false)
 return [qmctab.left qmctab.right]
 #
 end

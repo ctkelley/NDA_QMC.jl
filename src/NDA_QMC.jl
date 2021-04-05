@@ -25,7 +25,11 @@ export siewert
 export writetab
 export readtab
 export ctk_qmc_test
+export qmc_vs_sn
+export makeqmctab
+export readdata
 
+include("validate.jl")
 include("sn_angles.jl")
 include("source_iteration.jl")
 include("gmres_iteration.jl")

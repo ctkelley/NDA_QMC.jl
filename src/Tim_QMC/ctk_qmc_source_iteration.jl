@@ -41,7 +41,7 @@
 """
 
 
-function qmc_source_iteration(s, qmc_data, tol=1.e-8)
+function qmc_source_iteration(s, qmc_data, tol=1.e-4)
     #
     # precomputed data
     #

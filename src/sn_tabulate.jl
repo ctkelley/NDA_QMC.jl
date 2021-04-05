@@ -1,11 +1,11 @@
 """
-sn_tabulate(s,nx,flux; maketab=true)
+sn_tabulate(s,nx,flux; maketab=true, phiedge=true)
 
 Make the tables to compare with Garcia/Siewert
 
 Uses the converged flux from the solve.
 """
-function sn_tabulate(s, nx, flux; maketab=true)
+function sn_tabulate(s, nx, flux; maketab=true, phiedge=true)
     angleout = [-.05; collect(-.1:-.1:-1.0); 0.05; collect(0.1:0.1:1.0)]
     #
     # I don't really need the weights, but sn_init expects some
@@ -15,7 +15,7 @@ function sn_tabulate(s, nx, flux; maketab=true)
     na = floor(Int, na2 / 2)
     sn_data = sn_init(nx, na2, s; siewert=true)
     psi = sn_data.psi
-    psi = transport_sweep!(psi, flux, sn_data)
+    psi = transport_sweep!(psi, flux, sn_data; phiedge=phiedge)
     if maketab
     header = " mu         I(0,-mu)        I(tau,mu)"
     @printf("%s \n", header)
