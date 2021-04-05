@@ -13,7 +13,7 @@ function sn_tabulate(s, nx, flux; maketab=true, phiedge=true)
     #
     na2 = length(angleout)
     na = floor(Int, na2 / 2)
-    sn_data = sn_init(nx, na2, s; siewert=true)
+    sn_data = sn_init(nx, na2, s; siewert=true, phiedge=phiedge)
     psi = sn_data.psi
     psi = transport_sweep!(psi, flux, sn_data; phiedge=phiedge)
     if maketab

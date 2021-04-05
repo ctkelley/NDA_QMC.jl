@@ -2,7 +2,7 @@
 #include("ckt_qmc_init.jl")
 #include("ctk_qmc_source_iteration.jl")
 
-function ctk_qmc_test(N=10^4, Nx=50, na2=11; s=1, plotme=false)
+function ctk_qmc_test(N=10^4, Nx=50, na2=11; s=1, plotme=false, tol=1.e-4)
 
 ###############################################################################
 #### Inputs
@@ -19,7 +19,7 @@ function ctk_qmc_test(N=10^4, Nx=50, na2=11; s=1, plotme=false)
 # initialize qmc
 qmc_data = qmc_init(N, Nx, na2, s)
 # call qmc SI
-phi_avg, phi_edge, J_avg, J_edge, psi_right, psi_left, history, itt = qmc_source_iteration(s,qmc_data)
+phi_avg, phi_edge, J_avg, J_edge, psi_right, psi_left, history, itt = qmc_source_iteration(s,qmc_data,tol)
 #
 if plotme 
 plotqmd(phi_avg, phi_edge, J_avg, J_edge, 

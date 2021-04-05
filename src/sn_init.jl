@@ -1,5 +1,5 @@
 """
-sn_init(nx, na2, s)
+sn_init(nx, na2, s; siewert=false, phiedge=true)
 
 I pass a named tuple of precomputed and preallocated data to
 all the functions and solvers. 
@@ -15,7 +15,7 @@ s = parameter in Garcia/Siewert
 
 angles, weights = nodes and weights for the angular quadrature
 """
-function sn_init(nx, na2, s; siewert=false)
+function sn_init(nx, na2, s; siewert=false, phiedge=true)
     if siewert
     angles = [-.05; collect(-.1:-.1:-1.0); 0.05; collect(0.1:0.1:1.0)]
     weights = angles
@@ -31,7 +31,8 @@ function sn_init(nx, na2, s; siewert=false)
     psi_left = ones(na)
     source = zeros(nx)
     ptmp = zeros(na)
-    psi = zeros(na2, nx)
+    phiedge ? np=nx : np=nx+1
+    psi = zeros(na2, np)
     return sn_data = (
         c = c,
         dx = dx,

@@ -2,11 +2,11 @@
 This makes the table in the notebook showing the errors in QMC as a 
 function of Nx and N
 
-qmc_vs_sn(levels=6, Nrange=4; s=1.0)
+qmc_vs_sn(levels=6, Nrange=3; s=1.0)
 """
-function qmc_vs_sn(levels=6, Nrange=4; s=1.0)
+function qmc_vs_sn(levels=6, Nrange=3; s=1.0)
 NVals=zeros(Int64,Nrange)
-NVals[1]=1000
+NVals[1]=2000
 for i=2:Nrange
 NVals[i]=2*NVals[i-1]
 end
@@ -24,6 +24,23 @@ end
 makeqmctab(Dcomp,NVals,NxVals)
 return Dcomp
 end
+
+function sn_validate(Nrange=3; s=1.0)
+NVals=zeros(Int64,Nrange)
+NVals[1]=100
+for i=2:Nrange
+NVals[i]=2*NVals[i-1]
+end
+Dcomp=zeros(Nrange);
+#
+DataGS=readdata(s)
+for idv=1:Nrange
+Dval=siewert(s; nx=NVals[idv], na2=80)
+Dcomp[idv]=norm(Dval-DataGS,Inf)
+end
+return Dcomp
+end
+
 
 function makeqmctab(Dcomp,NVals,NxVals)
 printf(fmt::String, args...) = @eval @printf($fmt, $(args...))
@@ -49,9 +66,11 @@ function validate(N, levels, DataGS, s=1.0)
 Nx = 50
 Diffs=zeros(levels,)
 for il=0:levels-1
-DataQMC=ctk_qmc_test(N, Nx; s=s, plotme=false)
+DataQMC=ctk_qmc_test(N, Nx; s=s, plotme=false, tol=1.e-4)
 EDiff=(DataGS-DataQMC)./DataGS;
 Diffs[il+1]=norm(EDiff,Inf);
+#EDiff=(DataGS-DataQMC)
+#Diffs[il+1]=norm(EDiff)/norm(DataGS)
 Nx *= 2
 end
 return Diffs

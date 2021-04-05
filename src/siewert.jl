@@ -3,9 +3,9 @@ siewert(s=1.0)
 
 Gets the Garcia-Siewert tabular data and parks it where it's easy to find.
 """
-function siewert(s=1.0; filedump=false)
-    na2 = 20
-    nx = 2001
+function siewert(s=1.0; filedump=false, na2=80, nx=16001)
+#    na2 = 20; nx = 2001;
+#    na2 = 80; nx = 16001;
     #
     # precomputed data
     #
@@ -15,7 +15,7 @@ function siewert(s=1.0; filedump=false)
     #
     gout=gmres_iteration(sn_data,s)
     fgm = gout.sol
-    tabout=sn_tabulate(s, nx, fgm; maketab=false)
+    tabout=sn_tabulate(s, nx, fgm; maketab=false, phiedge=true)
     Dout=[tabout.left tabout.right]
     if filedump
     s == 1.0 ? sstr=string(1) : sstr="Inf"

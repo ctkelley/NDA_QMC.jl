@@ -17,11 +17,12 @@ function transport_sweep!(psi, phi, sn_data; phiedge=true)
     na2 = length(angles)
     na = floor(Int, na2 / 2)
     nx = length(phi)
+    phiedge ? np=nx : np=nx+1
     #
     # Initialize the angular flux and set the boundary conditions.
     #
     psi *= 0.0
-    @views psi[1:na, nx] = psi_right
+    @views psi[1:na, np] = psi_right
     @views psi[na+1:na2, 1] = psi_left
     #
     #
@@ -41,7 +42,7 @@ function transport_sweep!(psi, phi, sn_data; phiedge=true)
     #
     # Forward sweep
     #
-    @views for ix = 2:nx
+    @views for ix = 2:np
         copy!(psi[na+1:na2, ix], psi[na+1:na2, ix-1])
         psi[na+1:na2, ix] .*= vfr
         psi[na+1:na2, ix] .+= source_average[ix-1]
@@ -50,7 +51,7 @@ function transport_sweep!(psi, phi, sn_data; phiedge=true)
     #
     # Backward sweep
     #
-    @views for ix = nx-1:-1:1
+    @views for ix = np-1:-1:1
         copy!(psi[1:na, ix], psi[1:na, ix+1])
         psi[1:na, ix] .*= vfr
         psi[1:na, ix] .+= source_average[ix]

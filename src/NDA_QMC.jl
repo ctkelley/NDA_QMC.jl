@@ -28,6 +28,7 @@ export ctk_qmc_test
 export qmc_vs_sn
 export makeqmctab
 export readdata
+export sn_validate
 
 include("validate.jl")
 include("sn_angles.jl")
