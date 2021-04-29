@@ -24,11 +24,15 @@ export nda_compare
 export siewert
 export writetab
 export readtab
-export ctk_qmc_test
 export qmc_vs_sn
 export makeqmctab
 export readdata
 export sn_validate
+export qmc_sweep
+export qmc_init
+export qmc_gmres
+export qmc_si
+export tab_test
 
 include("validate.jl")
 include("sn_angles.jl")
@@ -43,7 +47,6 @@ include("nda.jl")
 include("nda_iteration.jl")
 include("siewert.jl")
 include("Tim_QMC/ctk_qmc_init.jl")
-include("Tim_QMC/ctk_qmc_test.jl")
+include("Tim_QMC/gmres_test.jl")
 include("Tim_QMC/ctk_qmc_sweep.jl")
-include("Tim_QMC/ctk_qmc_source_iteration.jl")
 end

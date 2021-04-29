@@ -66,7 +66,8 @@ function validate(N, levels, DataGS, s=1.0)
 Nx = 50
 Diffs=zeros(levels,)
 for il=0:levels-1
-DataQMC=ctk_qmc_test(N, Nx; s=s, plotme=false, tol=1.e-8)
+#DataQMC=ctk_qmc_test(N, Nx; s=s, plotme=false, tol=1.e-8)
+DataQMC=tab_test(N, Nx; s=s, tol=1.e-8)
 EDiff=(DataGS-DataQMC)./DataGS;
 Diffs[il+1]=norm(EDiff,Inf);
 #EDiff=(DataGS-DataQMC)
