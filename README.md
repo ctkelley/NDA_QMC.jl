@@ -36,9 +36,9 @@ I run two classes of sovlers so far
 
 - Plain-vanilla source iteration and GMRES accelerated source iteration
 - NDA with Picard iteration and NDA with Newton-GMRES
-- QMC sweep functions
+- QMC with Picard and GRMES. GMRES works great because QMC is deterministic.
 
-QMC solution iteration is next on the list.
+QMC with NDA next on the list.
 
 ## Dependencies:
 - [SIAMFANLEquations.jl](https://github.com/ctkelley/SIAMFANLEquations.jl)
