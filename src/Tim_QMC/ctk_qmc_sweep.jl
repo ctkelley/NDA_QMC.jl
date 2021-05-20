@@ -176,6 +176,7 @@ function qmc_sweep(phi_avg, qmc_data)
 
     return (phi_avg = phi_avg,
             phi_edge = phi_edge,
+            dphi = dphi,
             J_avg = J_avg,
             J_edge = J_edge,
             exit_right_bins = exit_right_bins,

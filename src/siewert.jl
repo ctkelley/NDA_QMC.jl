@@ -13,7 +13,7 @@ function siewert(s=1.0; filedump=false, na2=80, nx=16001, phiedge=true)
     #
     # Solve the problem
     #
-    gout=gmres_iteration(sn_data,s)
+    gout=krylov_iteration(sn_data,s; onlygmres=true)
     if phiedge
     fgm = gout.sol
     else

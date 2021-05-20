@@ -1,6 +1,10 @@
-function gmres_iteration(sn_data,s,tol=1.e-8)
+"""
+krlov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
+Solves the transport equation with GMRES and BiCGSTAB
+"""
+function krylov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
     #
-    # Set up the linear system for GMRES
+    # Set up the linear system for the Krylov solvers
     #
     nx=sn_data.nx
     #
@@ -23,16 +27,23 @@ function gmres_iteration(sn_data,s,tol=1.e-8)
     f0 = zeros(size(rhs))
     V = zeros(nx, 20)
     #
-    # kl_gmres solves the problem.
+    # kl_gmres and kl_bicgstab solve the problem.
     #
     gout = kl_gmres(f0, rhs, sn_matvec, V, tol; pdata = sn_data)
+    if onlygmres
+    bout=(solb=[], reshist=[])
+    else
+    bout = kl_bicgstab(f0, rhs, sn_matvec, V, tol; pdata = sn_data)
+    end
     #
     sol = gout.sol
-    reshist=gout.reshist
+    solb = bout.sol
+    reshistg=gout.reshist
+    reshistb=bout.reshist
     #
     # Tabulate the exit distributions to check results.
     #
-    return(sol=sol , reshist=reshist)
+    return(sol=sol, solb=solb, reshistg=reshistg, reshistb=reshistb)
 end
 
 """

@@ -22,21 +22,26 @@ function compare(s = 1.0; qmc=false)
     fout = sout.flux
     end
     #
-    # and now GMRES
+    # and now GMRES and BiCGSTAB
     #
     if qmc
     gout=qmc_gmres(N, nx, na2; s=s)
     else
-    gout=gmres_iteration(sn_data,s)
+    gout=krylov_iteration(sn_data,s)
     end
     fgm = gout.sol
+    fgmb = gout.solb
     #
     # Make a nice plot
     #
     snhist = sout.history ./ sout.history[1]
-    ghist = gout.reshist ./ gout.reshist[1]
-    semilogy(ghist, "k-", snhist, "k--")
-    legend(["gmres", "source iteration"])
+    slen=collect(1:length(snhist))
+    ghist = gout.reshistg ./ gout.reshistg[1]
+    glen=collect(1:length(ghist))
+    bhist = gout.reshistb ./ gout.reshistb[1]
+    blen=2*collect(1:length(bhist))
+    semilogy(glen,ghist, "k-", slen,snhist, "k--", blen, bhist, "k-.")
+    legend(["gmres", "source iteration", "bicgstab"])
     xlabel("Transport Sweeps")
     ylabel("Relative Residual")
     s == Inf ? strs = L"\infty" : strs = string(s)
@@ -53,5 +58,6 @@ function compare(s = 1.0; qmc=false)
 #    (solverdelta < 1.e-6) || error("results not the same")
     (solverdelta < 1.e-6) || println(solverdelta)
     sn_tabulate(s,nx,fgm)
-    println("Norm of result difference = ", norm(fout - fgm, Inf))
+    println("Norm of result differences: GMRES = ", norm(fout - fgm, Inf),
+            ",    BiCGSTAB = ",norm(fout - fgmb, Inf))
 end
