@@ -40,9 +40,6 @@ function krylov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
     solb = bout.sol
     reshistg=gout.reshist
     reshistb=bout.reshist
-    #
-    # Tabulate the exit distributions to check results.
-    #
     return(sol=sol, solb=solb, reshistg=reshistg, reshistb=reshistb)
 end
 

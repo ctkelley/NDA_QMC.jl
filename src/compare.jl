@@ -1,3 +1,8 @@
+"""
+compare(s = 1.0; qmc=false)
+
+Makes the Krylov comparison tables/figures
+"""
 function compare(s = 1.0; qmc=false)
     na2 = 20
     N=1000
@@ -22,10 +27,10 @@ function compare(s = 1.0; qmc=false)
     fout = sout.flux
     end
     #
-    # and now GMRES and BiCGSTAB
+    # and now GMRES and Bi-CGSTAB
     #
     if qmc
-    gout=qmc_gmres(N, nx, na2; s=s)
+    gout=qmc_krylov(N, nx, na2; s=s)
     else
     gout=krylov_iteration(sn_data,s)
     end
@@ -40,6 +45,7 @@ function compare(s = 1.0; qmc=false)
     glen=collect(1:length(ghist))
     bhist = gout.reshistb ./ gout.reshistb[1]
     blen=2*collect(1:length(bhist))
+    blen[1]=1
     semilogy(glen,ghist, "k-", slen,snhist, "k--", blen, bhist, "k-.")
     legend(["gmres", "source iteration", "bicgstab"])
     xlabel("Transport Sweeps")
@@ -59,5 +65,5 @@ function compare(s = 1.0; qmc=false)
     (solverdelta < 1.e-6) || println(solverdelta)
     sn_tabulate(s,nx,fgm)
     println("Norm of result differences: GMRES = ", norm(fout - fgm, Inf),
-            ",    BiCGSTAB = ",norm(fout - fgmb, Inf))
+            ",    Bi-CGSTAB = ",norm(fout - fgmb, Inf))
 end

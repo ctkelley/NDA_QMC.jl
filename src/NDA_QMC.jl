@@ -30,9 +30,13 @@ export readdata
 export sn_validate
 export qmc_sweep
 export qmc_init
-export qmc_gmres
+export qmc_krylov
 export qmc_si
 export tab_test
+export nda_fixed
+export nda_init
+export dhateval!
+export ctk_qmc_nda_test
 
 include("validate.jl")
 include("sn_angles.jl")
@@ -47,6 +51,7 @@ include("nda.jl")
 include("nda_iteration.jl")
 include("siewert.jl")
 include("Tim_QMC/ctk_qmc_init.jl")
-include("Tim_QMC/gmres_test.jl")
+include("Tim_QMC/qmc_krylov.jl")
 include("Tim_QMC/ctk_qmc_sweep.jl")
+include("Tim_QMC/ctk_qmc_nda_test.jl")
 end

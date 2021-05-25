@@ -170,7 +170,7 @@ function qmc_sweep(phi_avg, qmc_data)
         dphi[i] = phi_edge[i+1] - phi_edge[i]
     end
 
-    dphi /= (dx)
+    dphi ./= (dx)
     exit_left_bins[:,2] /= dmu
     exit_right_bins[:,2] /= dmu
 

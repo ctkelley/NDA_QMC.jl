@@ -1,15 +1,31 @@
 """
-qmc_gmres(N=10^4, Nx=100, na2=11; s=1.0)
+qmc_krylov(N=10^4, Nx=100, na2=11; s=1.0)
 Solves the linear system you get from QMC with GMRES.
 """
-function qmc_gmres(N=10^3, Nx=100, na2=11; s=1.0, tol=1.e-10)
+function qmc_krylov(N=10^3, Nx=100, na2=11; s=1.0, tol=1.e-10, onlygmres=false)
 mdata=mdata_init(N, Nx, na2, s)
 phi0=zeros(Nx,);
 b=mdata.frhs;
 V=zeros(Nx,20)
 eta=tol
-gmout=kl_gmres(phi0,b,axb,V,eta; pdata=mdata);
-return gmout
+#
+# kl_gmres and kl_bicgstab solve the problem.
+#
+gout = kl_gmres(phi0, b, axb, V, tol; pdata = mdata)
+if onlygmres
+    bout=(solb=[], reshist=[])
+    else
+    bout = kl_bicgstab(phi0, b, axb, V, tol; pdata = mdata)
+end
+#gmout=kl_gmres(phi0,b,axb,V,eta; pdata=mdata);
+sol=gout.sol
+solb=bout.sol
+reshistg=gout.reshist
+reshistb=bout.reshist
+    #
+    # Tabulate the exit distributions to check results.
+    #
+    return(sol=sol, solb=solb, reshistg=reshistg, reshistb=reshistb)
 end
 
 
@@ -18,7 +34,7 @@ tab_test(N=10^3, Nx=100, na2=11; s=1.0, tol=1.e-8)
 Makes a table to compare to Garcia-Siewert
 """
 function tab_test(N=10^3, Nx=100, na2=11; s=1.0, tol=1.e-8)
-itout=qmc_gmres(N, Nx, na2; s=s, tol=tol)
+itout=qmc_krylov(N, Nx, na2; s=s, tol=tol)
 qmctab=sn_tabulate(s, Nx, itout.sol; maketab=false, phiedge=false)
 return [qmctab.left qmctab.right]
 end

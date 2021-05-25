@@ -1,18 +1,24 @@
 function nda_compare(s=1.0, nx=2001, na=20)
 rpic=nda_iteration(nx,na,s);
-rnew=nda_nsoli(nx,na,s);
+ndakout=nda_nsoli(nx,na,s);
 pich=rpic.reshist./rpic.reshist[1];
 lpic=length(pich);
 apic=collect(1:lpic);
+rnew=ndakout.nout
 newh=(rnew.history/rnew.history[1])*pich[2];
 newabs= rnew.stats.ifun+ rnew.stats.ijac;
 anew=cumsum(newabs);
 anew[1]+=1;
-semilogy(apic,pich,"k-",anew,newh,"k--");
-legend(["Picard", "Newton-GMRES"])
+bnew=ndakout.noutb
+newhb=(bnew.history/bnew.history[1])*pich[2];
+newabsb = bnew.stats.ifun+ bnew.stats.ijac;
+anewb=cumsum(newabsb);
+anewb[1]+=1;
+semilogy(apic,pich,"k-",anew,newh,"k--",anewb, newhb,"k-.");
+legend(["Picard", "Newton-GMRES", "Newton-Bi-CGSTAB"])
 xlabel("Transport Sweeps")
 ylabel("Relative Residual")
-return (newh=newh, pich=pich)
+return (newh=newh, pich=pich, newhb=newhb)
 end
 
 function nda_iteration(nx, na, s=1.0)
@@ -45,6 +51,8 @@ nda_data=nda_init(nx,na,s)
 phi0=nda_fixed(phi0,nda_data)
 nout=nsoli(Fnda!, phi0, FS, FPS; eta=.5, fixedeta=false,
               rtol=1.e-8, pdata=nda_data)
-return nout
+noutb=nsoli(Fnda!, phi0, FS, FPS; eta=.5, fixedeta=false,
+              rtol=1.e-8, lsolver="bicgstab", pdata=nda_data)
+return (nout=nout, noutb=noutb)
 end
     
