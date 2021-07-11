@@ -37,6 +37,7 @@ export nda_fixed
 export nda_init
 export dhateval!
 export ctk_qmc_nda_test
+export qmc_nda
 
 include("validate.jl")
 include("sn_angles.jl")
@@ -50,6 +51,7 @@ include("compare.jl")
 include("nda.jl")
 include("nda_iteration.jl")
 include("siewert.jl")
+include("Tim_QMC/qmc_nda.jl")
 include("Tim_QMC/ctk_qmc_init.jl")
 include("Tim_QMC/qmc_krylov.jl")
 include("Tim_QMC/ctk_qmc_sweep.jl")
