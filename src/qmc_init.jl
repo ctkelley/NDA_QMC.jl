@@ -4,6 +4,7 @@ function qmc_init(N, Nx, na2, s)
 
     Lx = 5.0
     dx = Lx/Nx
+println(dx)
     #define tally mesh
     low_edges = range(0, stop=Lx-dx, length=Nx)
     high_edges = low_edges.+dx
