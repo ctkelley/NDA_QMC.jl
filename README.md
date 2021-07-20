@@ -7,6 +7,11 @@ This repo is part of the [CEMeNT](https://cement-psaap.github.io) project
 
 If you're not a CEMeNTer, go away.
 
+# Research Issue: How to get NDA to work with QMC
+
+One problem, probably not the only one, is that d phi/dx is not correct. Sam and I have tried a couple different ways without success. The new notebook
+__QMC-NDA-Woes.ipynb__ explains where we are so far. This mess will get merged with the real notebook when we get our problems figured out.
+
 ## Contents
 
 - [Instructions](#What-to-do)
