@@ -37,9 +37,9 @@ end
 return(phiout=phiout, ithist=ithist)
 end
 
-function avg2edge!(phi_edge, dphi, phi_avg,qmc_nda_data)
-sn_data=qmc_nda_data.nda_data.sn_data
-dx=sn_data.dx
+#function avg2edge!(phi_edge, dphi, phi_avg,qmc_nda_data)
+#sn_data=qmc_nda_data.nda_data.sn_data
+function avg2edge!(phi_edge, dphi, phi_avg, dx)
 Nx=length(phi_avg)
 m=length(phi_edge)
 Nx==length(dphi) || error("dphi lives on cell centers")
@@ -61,8 +61,10 @@ nda_data=qmc_nda_data.nda_data
 Nx=length(phi)
 phi_edge=zeros(Nx+1,)
 dphi=zeros(Nx,)
+dx=1.0/Nx
 qout=qmc_sweep(phi,qmc_data)
-avg2edge!(phi_edge, dphi, qout.phi_avg,qmc_nda_data)
+#avg2edge!(phi_edge, dphi, qout.phi_avg,qmc_nda_data)
+avg2edge!(phi_edge, dphi, qout.phi_avg, dx)
 dhat=(qout.J_avg + (dphi./3.0))./qout.phi_avg
 #println(norm(dhat-dhatp,Inf),"  ",norm(dphi-dphip))
 #

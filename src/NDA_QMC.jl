@@ -37,6 +37,7 @@ export nda_fixed
 export nda_init
 export dhateval!
 export ctk_qmc_nda_test
+export avg2edge!
 export qmc_nda
 export sn_solve
 
