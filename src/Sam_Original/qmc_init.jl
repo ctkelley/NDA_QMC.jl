@@ -27,7 +27,7 @@ function qmc_init(N, Nx, na2, s)
     exit_left_bins[:,2] .= 0
 
     # multi group/zone matrix
-    sigt = [1] # pseudo 4-group setup
+    sigt = [1,1,1,1,1,1] # pseudo 4-group setup
     G = size(sigt)[1] # number of groups
     temp = zeros(Nx, G)
     for i in 1:G
@@ -38,10 +38,10 @@ function qmc_init(N, Nx, na2, s)
     source_strength = 0.0
     source = source_strength*ones(Nx,G)
     # scattering
-    sigsFunc(x) = exp.(-x/s)
+    #sigsFunc(x) = exp.(-x/s)
     # s now needs to be input as an array that matches the dimensions of sigt
-    sigs = sigsFunc(midpoints)
-    #sigs = ones(Nx,G)
+    #sigs = sigsFunc(midpoints)
+    sigs = ones(Nx,G)
     #phi_avg is defaulted to = zeros(Nx)
     phi_edge = zeros(Nx+1,G)
     dphi = zeros(Nx,G)
