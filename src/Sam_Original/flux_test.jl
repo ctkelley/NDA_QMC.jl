@@ -23,7 +23,7 @@ pygui(true)
 ###############################################################################
 
 N = [10^2, 10^3, 10^4, 10^5] #number of QMC particles
-N = [2^8, 2^11, 2^14]
+N = [2^8, 2^11, 2^14, 2^17]
 Nx = 100 #number of tally cells
 na2 = 11 #number of angles for angular mesh
 s = [1,1,1,1,1,1] #parameter in Garcia/Siewert
