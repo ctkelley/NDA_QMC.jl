@@ -1,6 +1,6 @@
 #include("qmc_move_part.jl")
 
-function qmc_sweep(phi_avg, qmc_data)
+function qmc_sweep(qmc_data)
 
     function move_part(mu,zone,x,Nx,high_edges,low_edges,dxs,weight,ds_zone,
                         phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
@@ -67,6 +67,7 @@ function qmc_sweep(phi_avg, qmc_data)
     exit_right_bins[:,2] .= 0
 
     phi_edge = qmc_data.phi_edge
+    phi_avg = qmc_data.phi_avg
     dphi = qmc_data.dphi
     phi_s = qmc_data.phi_s
     J_avg = qmc_data.J_avg
@@ -76,9 +77,7 @@ function qmc_sweep(phi_avg, qmc_data)
     source = qmc_data.source
     sigs = qmc_data.sigs
     c = qmc_data.c
-    q = phi_avg.*sigs .+ source
-    phi_avg = zeros(Nx,G)
-
+    q = ones(Nx, G).*sigs .+ source
     #initialize sobol sequence
     #   skipping the expected number is suggested for Sobol
     #   but has been causing spikes for higher particle counts
