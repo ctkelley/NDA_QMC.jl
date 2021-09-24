@@ -1,4 +1,7 @@
 include("move_part.jl")
+using Sobol
+#using GoldenSequences
+using Random
 
 function qmc_sweep(phi_avg, qmc_data)
 
@@ -31,6 +34,7 @@ function qmc_sweep(phi_avg, qmc_data)
     source = qmc_data.source
     sigs = qmc_data.sigs
     c = qmc_data.c
+    generator =qmc_data.generator
 
     q = phi_avg*sigs' + source
     phi_avg = zeros(Nx,G)
@@ -38,8 +42,19 @@ function qmc_sweep(phi_avg, qmc_data)
     #initialize sobol sequence
     #   skipping the expected number is suggested for Sobol
     #   but has been causing spikes for higher particle counts
-    rng = SobolSeq(2)
-    rng_bndl = SobolSeq(1)
+    if (generator == "Sobol")
+        rng = SobolSeq(2)
+        rng_bndl = SobolSeq(1)
+        print("sobol")
+    elseif (generator == "Random")
+        rng1 = rand(N)
+        rng2 = rand(N)
+    elseif (generator == "Golden")
+        rng = GoldenSequence(2)
+    else
+        print("RNG must be 'Sobol' or 'Random'. ")
+    end
+
     #skip(rng,N)
     #skip(rng_bndl,N)
 
@@ -88,9 +103,20 @@ function qmc_sweep(phi_avg, qmc_data)
     #do volumetric source
     for i in 1:N
         #pick starting point and mu
-        tmp_rnd = next!(rng)    # for Sobol
-        x = Lx*tmp_rnd[1]       # number between 0 and Lx for starting
-        mu = 2*tmp_rnd[2]-1     # mu in -1 to 1
+        if (generator == "Sobol")
+            tmp_rnd = next!(rng)
+            randX = tmp_rnd[1]
+            randMu = tmp_rnd[2]
+        elseif (generator == "Random")
+            randX = rng1[i]
+            randMu = rng2[i]
+        elseif (generator == "Golden")
+            randX = rng[i][1]
+            randMu = rng[i][2]
+        end
+
+        x = Lx*randX     # number between 0 and Lx for starting
+        mu = 2*randMu-1     # mu in -1 to 1
         #determine zone
         zone = argmax(1*(x.>=low_edges).*(x .< high_edges))
         #compute initial weight

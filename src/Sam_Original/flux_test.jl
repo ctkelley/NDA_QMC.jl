@@ -32,7 +32,7 @@ sigt = 1 ./ (3*D)
 Nx = 50 #number of tally cells
 na2 = 11 #number of angles for angular mesh
 s = [1] #parameter in Garcia/Siewert
-N = 2^14
+N = 2^8
 #sigt = [1]
 #sigs = [0.8]
 
@@ -41,51 +41,58 @@ N = 2^14
 ###############################################################################
 
 # function calls
-qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt)
-phi_avg, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
-# sum across groups
+rng = "Golden"
+qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
+phi_avg_Gold, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
-#phi_avg = sum(phi_avg, dims=2)
-#phi_edge = sum(phi_edge, dims=2)
-#dphi = sum(dphi, dims=2)
-#J_avg = sum(J_avg, dims=2)
-#J_edge = sum(J_edge, dims=2)
+rng = "Sobol"
+qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
+phi_avg_Sobol, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
+
+rng = "Random"
+qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
+phi_avg_Random, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
 # analytical solution
 source_strength = 1.0
 G = size(sigt)[1] # number of groups
 Q = source_strength*ones(G) # source
 flux = inv(Diagonal(sigt[:,1]) .- sigs)*Q # returns diagonal matrix
-#flux = sum(sum(flux,dims=2))*ones(Nx) # sum across groups
 
 # plotting
 midpoints = qmc_data.midpoints
 edges = qmc_data.edges
+"""
 figure(1)
 title("Group Scalar Flux")
 for i in 1:G
-    plot(midpoints, phi_avg[:,i], label=i)
+    plot(midpoints, phi_avg_Sobol[:,i], label=i)
     plot(midpoints,flux[i]*ones(Nx),"--")
 end
 #plot(midpoints,phi_avg, label="QMC")
 ylabel("cell averaged flux")
 xlabel("midpoints")
 legend()
+"""
 
 figure(2)
 title("Scalar Flux")
-plot(midpoints, sum(phi_avg, dims=2), label="QMC")
+plot(midpoints, sum(phi_avg_Sobol, dims=2), label="Sobol")
+plot(midpoints, sum(phi_avg_Golden, dims=2), label="Golden")
+plot(midpoints, sum(phi_avg_Random, dims=2), label="Random")
 plot(midpoints, sum(flux)*ones(Nx))
 ylabel("cell averaged flux")
 xlabel("midpoints")
 legend()
 
 figure(3)
-plot(1:G, abs.(mean(phi_avg, dims=1)'[:,1]-flux))
+plot(1:G, abs.(mean(phi_avg_Sobol, dims=1)'[:,1]-flux), label="Sobol")
+plot(1:G, abs.(mean(phi_avg_Golden, dims=1)'[:,1]-flux), label="Golden")
+plot(1:G, abs.(mean(phi_avg_Random, dims=1)'[:,1]-flux), label="Random")
 ylabel("Mean Absolute Error")
 xlabel("Group")
 title("Average Group Error")
-
+legend()
 ###############################################################################
 #### Single Function Call
 ###############################################################################

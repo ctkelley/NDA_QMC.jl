@@ -1,6 +1,6 @@
-using Sobol
+#using Sobol
 
-function qmc_init(N, Nx, na2, s, sigs, sigt)
+function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
 
     Lx = 5000.0
     dx = Lx/Nx
@@ -80,5 +80,6 @@ function qmc_init(N, Nx, na2, s, sigs, sigt)
         source = source,
         sigs = sigs,
         c = s,
-        G = G)
+        G = G,
+        generator = generator)
 end
