@@ -1,51 +1,6 @@
-#include("qmc_move_part.jl")
+include("move_part.jl")
 
-function qmc_sweep(qmc_data)
-
-    function move_part(mu,zone,x,Nx,high_edges,low_edges,dxs,weight,ds_zone,
-                        phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
-                        exit_right_bins,exit_left_bins,c)
-        # direction to sweep
-        if mu > 0
-            zoneRange = (zone):Nx
-        else
-            zoneRange = (zone):-1:1
-        end
-        # sweep through all zones
-        for z_prop in zoneRange
-            # first zone will only be a partial zone length
-            if (z_prop == zone)
-                if (mu > 0)
-                    ds = (high_edges[zone] - x)/abs(mu) #how far in the first zone
-                else
-                    ds = (low_edges[zone] - x)/mu
-                end
-            # remaining zones will be full length
-            else
-                ds = ds_zone
-            end
-            # update variables
-            score_TL           = weight.*(1 .- exp.(-(ds*sigt[z_prop,:])))./sigt[z_prop,:]./dxs[z_prop] #implicit capture for track-length
-            phi_avg[z_prop,:] += score_TL
-            J_avg[z_prop,:]   += score_TL*mu
-            phi_s[z_prop,:]   += (weight.*exp.(-low_edges[z_prop]./c)).*(1 .- exp.(-(ds*(sigt[z_prop,:] .+ mu./c))))./(sigt[z_prop,:] .+ mu./c)./dxs[z_prop]
-            dphi[z_prop,:]    += (weight.*((-dx/2).*(1 .- exp.(-sigt[z_prop,:]*ds))
-                                .+ mu*((1 .- exp.(-sigt[z_prop,:]*ds))./sigt[z_prop,:])
-                                .- ds*exp.(-sigt[z_prop,:]*ds)))./sigt[z_prop,:]./dxs[z_prop]
-            weight             .*= exp.(-(ds*sigt[z_prop,:]))
-
-            if (mu > 0)
-                J_edge[z_prop+1,:]   += weight
-                phi_edge[z_prop+1,:] += weight./abs(mu)
-            else
-                J_edge[z_prop,:]   -= weight
-                phi_edge[z_prop,:] += weight./abs(mu)
-            end
-        end
-            #add to the exiting flux - find the bin and add it to that one
-            #exit_left_bins[argmin(abs.(exit_left_bins[:,1] .- mu)),2] += weight/abs(mu)
-        return
-    end
+function qmc_sweep(phi_avg, qmc_data)
 
     N = qmc_data.N
     Nx = qmc_data.Nx
@@ -67,7 +22,6 @@ function qmc_sweep(qmc_data)
     exit_right_bins[:,2] .= 0
 
     phi_edge = qmc_data.phi_edge
-    phi_avg = qmc_data.phi_avg
     dphi = qmc_data.dphi
     phi_s = qmc_data.phi_s
     J_avg = qmc_data.J_avg
@@ -77,7 +31,10 @@ function qmc_sweep(qmc_data)
     source = qmc_data.source
     sigs = qmc_data.sigs
     c = qmc_data.c
-    q = ones(Nx, G).*sigs .+ source
+
+    q = phi_avg*sigs' + source
+    phi_avg = zeros(Nx,G)
+
     #initialize sobol sequence
     #   skipping the expected number is suggested for Sobol
     #   but has been causing spikes for higher particle counts
@@ -86,7 +43,8 @@ function qmc_sweep(qmc_data)
     #skip(rng,N)
     #skip(rng_bndl,N)
 
-    #do boundary source
+    """
+    #do left boundary source
     for i in 1:N
         tmp_rnd = next!(rng_bndl) #for Sobol
         x = 0                     #start at left boundary
@@ -95,9 +53,30 @@ function qmc_sweep(qmc_data)
         #determine zone (left boundary)
         zone = 1
         #compute weight
-        weight = ones(G)*0.5/(N*G)#1/N*0.5
+        weight = ones(G)*0.5/(N)#1/N*0.5
         #set phi_edge
         phi_edge[1,:] = ones(G)#1
+        #total path length across zone
+        ds_zone = dx/abs(mu)
+        J_edge[zone,:] += weight
+        move_part(midpoints,dx,mu,zone,x,Nx,high_edges,low_edges,dxs,weight,ds_zone,
+                  phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
+                  exit_right_bins,exit_left_bins,c)
+    end
+    """
+    """
+    #do right boundary source
+    for i in 1:N
+        tmp_rnd = next!(rng_bndl) #for Sobol
+        x = Lx                     #start at left boundary
+        fl(mu) =  -sqrt(mu)
+        mu = fl(tmp_rnd[1])       #mu in -1 to 0
+        #determine zone (left boundary)
+        zone = Nx
+        #compute weight
+        weight = ones(G)*0.5/(N)#1/N*0.5
+        #set phi_edge
+        phi_edge[Nx,:] = ones(G)#1
         #total path length across zone
         ds_zone = dx/abs(mu)
         J_edge[zone,:] += weight
@@ -105,8 +84,8 @@ function qmc_sweep(qmc_data)
                   phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
                   exit_right_bins,exit_left_bins,c)
     end
-
-    #do sources in the problem
+    """
+    #do volumetric source
     for i in 1:N
         #pick starting point and mu
         tmp_rnd = next!(rng)    # for Sobol
@@ -114,23 +93,14 @@ function qmc_sweep(qmc_data)
         mu = 2*tmp_rnd[2]-1     # mu in -1 to 1
         #determine zone
         zone = argmax(1*(x.>=low_edges).*(x .< high_edges))
-        #compute weight
-        weight = q[zone,:]/(N*G)*dx*Nx
+        #compute initial weight
+        weight = q[zone,:]/N*dx*Nx
         #how far does a particle travel when it crosses a zone
         ds_zone = dx/abs(mu)
-        move_part(mu,zone,x,Nx,high_edges,low_edges,dxs,weight,ds_zone,
+        move_part(midpoints,dx,mu,zone,x,Nx,high_edges,low_edges,dxs,weight,ds_zone,
                   phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
                   exit_right_bins,exit_left_bins,c)
     end
-
-    # sum across groups
-    phi_avg = sum(phi_avg, dims=2)
-    phi_edge = sum(phi_edge, dims=2)
-    dphi = sum(dphi, dims=2)
-    J_avg = sum(J_avg, dims=2)
-    J_edge = sum(J_edge, dims=2)
-    #exit_left_bins[:,2] /= dmu
-    #exit_right_bins[:,2] /= dmu
 
     return (phi_avg = phi_avg,
             phi_edge = phi_edge,
