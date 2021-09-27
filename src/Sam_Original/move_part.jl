@@ -3,6 +3,9 @@ function move_part(midpoints,dx,mu,zone,x,Nx,high_edges,low_edges,dxs,weight,ds_
                     phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
                     exit_right_bins,exit_left_bins,c)
     # direction to sweep
+    if (zone == Nx)
+        test = 0
+    end
     if mu > 0
         zoneRange = (zone):1:Nx
     else

@@ -2,7 +2,7 @@
 
 function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
 
-    Lx = 5000.0
+    Lx = 500.0
     dx = Lx/Nx
     #define tally mesh
     low_edges = range(0, stop=Lx-dx, length=Nx)
@@ -28,13 +28,10 @@ function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
 
     G = size(sigt)[1] # number of groups
     temp1 = zeros(Nx, G)
-    #temp2 = zeros(Nx, G)
     for i in 1:G
         temp1[:,i] = ones(Nx)*sigt[i]
-        #temp2[:,i] = ones(Nx)*sigs[i]
     end
     sigt = temp1
-    #sigs = temp2
     source_strength = 1.0
     source = source_strength*ones(Nx,G)
 

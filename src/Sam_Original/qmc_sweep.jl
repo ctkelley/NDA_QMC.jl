@@ -2,6 +2,7 @@ include("move_part.jl")
 using Sobol
 #using GoldenSequences
 using Random
+using PyPlot
 
 function qmc_sweep(phi_avg, qmc_data)
 
@@ -39,10 +40,9 @@ function qmc_sweep(phi_avg, qmc_data)
     q = phi_avg*sigs' + source
     phi_avg = zeros(Nx,G)
 
-    #initialize sobol sequence
-    #   skipping the expected number is suggested for Sobol
-    #   but has been causing spikes for higher particle counts
     if (generator == "Sobol")
+        #   skipping the expected number is suggested for Sobol
+        #   but has been causing spikes for higher particle counts
         rng = SobolSeq(2)
         rng_bndl = SobolSeq(1)
         print("sobol")
@@ -100,6 +100,7 @@ function qmc_sweep(phi_avg, qmc_data)
                   exit_right_bins,exit_left_bins,c)
     end
     """
+    zones = zeros(Nx)
     #do volumetric source
     for i in 1:N
         #pick starting point and mu
@@ -119,6 +120,7 @@ function qmc_sweep(phi_avg, qmc_data)
         mu = 2*randMu-1     # mu in -1 to 1
         #determine zone
         zone = argmax(1*(x.>=low_edges).*(x .< high_edges))
+        zones[zone] += 1
         #compute initial weight
         weight = q[zone,:]/N*dx*Nx
         #how far does a particle travel when it crosses a zone
@@ -127,6 +129,13 @@ function qmc_sweep(phi_avg, qmc_data)
                   phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
                   exit_right_bins,exit_left_bins,c)
     end
+
+    # check to see zones are equally distributed
+    #bar(1:Nx, zones)
+    #figure(5)
+    #bar(1:G, sum(phi_avg, dims=1)[:])
+    #bar(1:G, sum(sigs, dims=1)[:])
+    #yscale("log")
 
     return (phi_avg = phi_avg,
             phi_edge = phi_edge,
