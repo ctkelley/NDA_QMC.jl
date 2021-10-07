@@ -1,8 +1,8 @@
-using Sobol
+#using Sobol
 
-function qmc_init(N, Nx, na2, s)
+function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
 
-    Lx = 5.0
+    Lx = 500.0
     dx = Lx/Nx
     #define tally mesh
     low_edges = range(0, stop=Lx-dx, length=Nx)
@@ -26,24 +26,28 @@ function qmc_init(N, Nx, na2, s)
     exit_left_bins[:,1] = -1*range(dmu/2, stop = 1- dmu/2, step = dmu)
     exit_left_bins[:,2] .= 0
 
+    G = size(sigt)[1] # number of groups
+    temp1 = zeros(Nx, G)
+    for i in 1:G
+        temp1[:,i] = ones(Nx)*sigt[i]
+    end
+    sigt = temp1
+    source_strength = 1.0
+    source = source_strength*ones(Nx,G)
+
+    """
     # multi group/zone matrix
     sigt = [1,1,1,1,1,1] # pseudo 4-group setup
-    G = size(sigt)[1] # number of groups
-    temp = zeros(Nx, G)
-    for i in 1:G
-        temp[:,i] = ones(Nx)*sigt[i]
-    end
-    sigt = temp
-    # source
-    source_strength = 0.0
-    source = source_strength*ones(Nx,G)
     # scattering
     #sigsFunc(x) = exp.(-x/s)
     # s now needs to be input as an array that matches the dimensions of sigt
     #sigs = sigsFunc(midpoints)
     sigs = ones(Nx,G)
+    """
+
     #phi_avg is defaulted to = zeros(Nx)
     phi_edge = zeros(Nx+1,G)
+    phi_avg = source_strength*zeros(Nx,G)
     dphi = zeros(Nx,G)
     phi_s = zeros(Nx,G) .+ 1e-6
     # current
@@ -64,6 +68,7 @@ function qmc_init(N, Nx, na2, s)
         exit_left_bins = exit_left_bins,
         exit_right_bins = exit_right_bins,
         phi_edge = phi_edge,
+        phi_avg = phi_avg,
         dphi = dphi,
         phi_s = phi_s,
         J_avg = J_avg,
@@ -72,5 +77,6 @@ function qmc_init(N, Nx, na2, s)
         source = source,
         sigs = sigs,
         c = s,
-        G = G)
+        G = G,
+        generator = generator)
 end
