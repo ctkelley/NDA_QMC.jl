@@ -1,6 +1,6 @@
 include("move_part.jl")
 using Sobol
-#using GoldenSequences
+using GoldenSequences
 using Random
 using PyPlot
 
@@ -39,21 +39,8 @@ function qmc_sweep(phi_avg, qmc_data)
 
     q = phi_avg*sigs' + source
     phi_avg = zeros(Nx,G)
-
-    if (generator == "Sobol")
-        #   skipping the expected number is suggested for Sobol
-        #   but has been causing spikes for higher particle counts
-        rng = SobolSeq(2)
-        rng_bndl = SobolSeq(1)
-        print("sobol")
-    elseif (generator == "Random")
-        rng1 = rand(N)
-        rng2 = rand(N)
-    elseif (generator == "Golden")
-        rng = GoldenSequence(2)
-    else
-        print("RNG must be 'Sobol' or 'Random'. ")
-    end
+    # initialize random number generator
+    rng = rngInit(generator, N)
 
     #skip(rng,N)
     #skip(rng_bndl,N)
@@ -104,18 +91,7 @@ function qmc_sweep(phi_avg, qmc_data)
     #do volumetric source
     for i in 1:N
         #pick starting point and mu
-        if (generator == "Sobol")
-            tmp_rnd = next!(rng)
-            randX = tmp_rnd[1]
-            randMu = tmp_rnd[2]
-        elseif (generator == "Random")
-            randX = rng1[i]
-            randMu = rng2[i]
-        elseif (generator == "Golden")
-            randX = rng[i][1]
-            randMu = rng[i][2]
-        end
-
+        randX, randMu = nextRN(rng, i, generator)
         x = Lx*randX     # number between 0 and Lx for starting
         mu = 2*randMu-1     # mu in -1 to 1
         #determine zone
@@ -129,13 +105,6 @@ function qmc_sweep(phi_avg, qmc_data)
                   phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
                   exit_right_bins,exit_left_bins,c)
     end
-
-    # check to see zones are equally distributed
-    #bar(1:Nx, zones)
-    #figure(5)
-    #bar(1:G, sum(phi_avg, dims=1)[:])
-    #bar(1:G, sum(sigs, dims=1)[:])
-    #yscale("log")
 
     return (phi_avg = phi_avg,
             phi_edge = phi_edge,
