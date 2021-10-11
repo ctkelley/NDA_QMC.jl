@@ -32,26 +32,28 @@ sigt = 1 ./ (3*D)
 Nx = 50 #number of tally cells
 na2 = 11 #number of angles for angular mesh
 s = [1] #parameter in Garcia/Siewert
-N = 2^11
+N = 2^13
+geometry = "Slab"
 
 ###############################################################################
 #### Source Iteration Call
 ###############################################################################
-
-# function calls
-rng = "Golden"
-qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
-phi_avg_Golden, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
-
 rng = "Sobol"
-qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
+qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng, geometry)
 phi_avg_Sobol, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
-rng = "Random"
-qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
-phi_avg_Random, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
+# function calls
+#rng = "Golden"
+#qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
+#phi_avg_Golden, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
-# analytical solution
+#rng = "Random"
+#qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
+#phi_avg_Random, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
+
+###############################################################################
+#### Analytic Solution
+###############################################################################
 source_strength = 1.0
 G = size(sigt)[1] # number of groups
 Q = source_strength*ones(G) # source
@@ -65,8 +67,8 @@ midpoints = qmc_data.midpoints
 figure()
 title("Scalar Flux")
 plot(midpoints, sum(phi_avg_Sobol, dims=2), label="Sobol")
-plot(midpoints, sum(phi_avg_Golden, dims=2), label="Golden")
-plot(midpoints, sum(phi_avg_Random, dims=2), label="Random")
+#plot(midpoints, sum(phi_avg_Golden, dims=2), label="Golden")
+#plot(midpoints, sum(phi_avg_Random, dims=2), label="Random")
 plot(midpoints, sum(flux)*ones(Nx), label="Analytic Sol")
 ylabel("cell averaged flux")
 xlabel("midpoints")
@@ -81,9 +83,8 @@ color_sequence = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c",
                   "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"]
 title("Group Scalar Flux")
 for i in 1:1:G
-    plot(midpoints, phi_avg_Sobol[:,i], label=i,color=color_sequence[counter] ) #color=color_sequence[i]
-    plot(midpoints,flux[i]*ones(Nx),"--",color=color_sequence[counter] )
-    counter += 1
+    plot(midpoints, phi_avg_Sobol[:,i], label=i,color=color_sequence[i] ) #color=color_sequence[i]
+    plot(midpoints,flux[i]*ones(Nx),"--",color=color_sequence[i] )
 end
 #plot(midpoints,phi_avg, label="QMC")
 ylabel("cell averaged flux")

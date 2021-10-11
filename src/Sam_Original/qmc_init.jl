@@ -1,6 +1,6 @@
 #using Sobol
 
-function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
+function qmc_init(N, Nx, na2, s, sigs, sigt, generator, Geo)
 
     Lx = 500.0
     dx = Lx/Nx
@@ -13,7 +13,7 @@ function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
 
     #define angular flux mesh
     #exit_left_bins data structure to hold the exiting angular flux,
-    #the first column has the bin centers and the
+    #the first column has the bin centers and
     #and the second holds the values.
     #exit_right_bins is the same
     dmu = 1/na2
@@ -44,7 +44,6 @@ function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
     #sigs = sigsFunc(midpoints)
     sigs = ones(Nx,G)
     """
-
     #phi_avg is defaulted to = zeros(Nx)
     phi_edge = zeros(Nx+1,G)
     phi_avg = source_strength*zeros(Nx,G)
@@ -53,6 +52,16 @@ function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
     # current
     J_avg = zeros(Nx,G)
     J_edge = zeros(Nx+1,G)
+    # Geometry
+    if (Geo == "Slab")
+        Geo = 1
+    elseif (Geo == "Cylinder")
+        Geo = 2
+    elseif (Geo == "Sphere")
+        Geo = 3
+    else
+        print("Geo must be: Slab, Cylinder, or Sphere")
+    end
 
     return qmc_data = (
         N = N,
@@ -78,5 +87,6 @@ function qmc_init(N, Nx, na2, s, sigs, sigt, generator)
         sigs = sigs,
         c = s,
         G = G,
-        generator = generator)
+        generator = generator,
+        Geo = Geo)
 end
