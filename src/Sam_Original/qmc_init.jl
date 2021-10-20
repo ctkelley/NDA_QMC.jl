@@ -2,14 +2,14 @@
 
 function qmc_init(N, Nx, na2, s, sigs, sigt, generator, Geo)
 
-    Lx = 500.0
-    dx = Lx/Nx
+    LB = 0.0    # left bound
+    RB = 500.0   # right bound
+    dx = (RB-LB)/Nx
     #define tally mesh
-    low_edges = range(0, stop=Lx-dx, length=Nx)
+    low_edges = range(LB, stop=RB-dx, length=Nx)
     high_edges = low_edges.+dx
-    dxs = high_edges - low_edges
     midpoints = 0.5*(high_edges + low_edges)
-    edges = range(0, stop=Lx, length=Nx+1)
+    edges = range(LB, stop=RB, length=Nx+1)
 
     #define angular flux mesh
     #exit_left_bins data structure to hold the exiting angular flux,
@@ -60,17 +60,16 @@ function qmc_init(N, Nx, na2, s, sigs, sigt, generator, Geo)
     elseif (Geo == "Sphere")
         Geo = 3
     else
-        print("Geo must be: Slab, Cylinder, or Sphere")
+        print("Geo must be: 'Slab', 'Cylinder', or 'Sphere'")
     end
 
     return qmc_data = (
         N = N,
         Nx = Nx,
-        Lx = Lx,
-        dx = dx,
+        RB = RB,
+        LB = LB,
         low_edges = low_edges,
         high_edges = high_edges,
-        dxs = dxs,
         midpoints = midpoints,
         edges = edges,
         dmu = dmu,

@@ -32,8 +32,8 @@ sigt = 1 ./ (3*D)
 Nx = 50 #number of tally cells
 na2 = 11 #number of angles for angular mesh
 s = [1] #parameter in Garcia/Siewert
-N = 2^13
-geometry = "Slab"
+N = 2^11
+geometry = "Sphere"
 
 ###############################################################################
 #### Source Iteration Call
@@ -69,7 +69,7 @@ title("Scalar Flux")
 plot(midpoints, sum(phi_avg_Sobol, dims=2), label="Sobol")
 #plot(midpoints, sum(phi_avg_Golden, dims=2), label="Golden")
 #plot(midpoints, sum(phi_avg_Random, dims=2), label="Random")
-plot(midpoints, sum(flux)*ones(Nx), label="Analytic Sol")
+#plot(midpoints, sum(flux)*ones(Nx), label="Analytic Sol")
 ylabel("cell averaged flux")
 xlabel("midpoints")
 legend()

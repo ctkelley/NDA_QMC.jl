@@ -3,20 +3,20 @@ using Sobol
 using GoldenSequences
 using Random
 using PyPlot
+pygui(true)
 import Distributions: Uniform
 
 function qmc_sweep(phi_avg, qmc_data)
 
     N = qmc_data.N
     Nx = qmc_data.Nx
-    Lx = qmc_data.Lx
-    dx = qmc_data.dx
+    RB = qmc_data.RB
+    LB = qmc_data.LB
     G = qmc_data.G
     Geo = qmc_data.Geo
 
     low_edges = qmc_data.low_edges
     high_edges = qmc_data.high_edges
-    dxs = qmc_data.dxs
     midpoints = qmc_data.midpoints
     edges = qmc_data.edges
 
@@ -42,7 +42,7 @@ function qmc_sweep(phi_avg, qmc_data)
     q = phi_avg*sigs' + source
     phi_avg = zeros(Nx,G)
     # initialize random number generator
-    rng = rngInit(generator, N)
+    rng = rngInit(generator, Geo, N)
 
     #skip(rng,N)
     #skip(rng_bndl,N)
@@ -92,26 +92,21 @@ function qmc_sweep(phi_avg, qmc_data)
     #do volumetric source
     for i in 1:N
         #pick starting point and mu
-        randX, randMu = nextRN(rng, i, generator)
-        x = Lx*randX     # number between 0 and Lx for starting
-        mu = 2*randMu-1     # mu in -1 to 1
-        # extra parameters for cylinder and sphere
+        randX, randMu, randPhi = nextRN(rng, i, generator, Geo)
+        x =  (RB-LB)*randX    # number between 0 and Lx for starting
+        mu = 2*randMu-1   # mu in -1 to 1
         if (Geo > 1)
-            phi = rand(Uniform(0,2*pi)) # may need to make this pi not 2pi
             muSin = sqrt(1-mu^2)
         else
-            phi = 0
             muSin = 0
         end
-        z = y = 0
-        #determine starting zone
-        #zone = argmax(1*(x.>=low_edges).*(x .< high_edges))
-        zone = getZone(x,y,z,low_edges,high_edges)
-        ds_zone = distance_across_zone(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges,zone,dxs)
+        phi = randPhi*2*pi
+        y = z = 0
         #compute initial weight
-        weight = q[zone,:]/N*dx*Nx
+        zone = getZone(x,y,z,low_edges,high_edges)
+        weight = q[zone,:]/N*cellVolume(Geo, zone, low_edges, high_edges)*Nx
         #how far does a particle travel when it crosses a zone
-        move_part(midpoints,dx,mu,zone,ds_zone,x,Nx,high_edges,low_edges,dxs,weight,
+        move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,
                     phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
                     exit_right_bins,exit_left_bins,c,phi,muSin,z,y,Geo)
     end
