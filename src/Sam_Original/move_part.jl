@@ -2,12 +2,12 @@ include("misc_functions.jl")
 
 function move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,
                     phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
-                    exit_right_bins,exit_left_bins,c,phi,muSin,z,y,Geo)
-
+                    exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
 
     # collect list of zones crossed and path lengths in each
-    zoneList, dsList = getPath(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges)
+    zoneList, dsList = getPath(Geo,x,y,z,mu,phi,low_edges,high_edges)
     counter = 1
+
     # sweep through all zones
     for z_prop in zoneList
         ds = dsList[counter]

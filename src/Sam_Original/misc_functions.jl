@@ -1,73 +1,109 @@
 
-function rngInit(generator, Geo, N)
+function rngInit(generator, Geo, N, Dim)
     #   skipping the expected number is suggested for Sobol
     #   but has been causing spikes for higher particle counts
-    if (Geo == 1)
-        Dim = 2
-    else
-        Dim = 3
-    end
 
+    # need to  create a matrix of random numbers by number of dimensions
+    # the sobol package makes this difficult
     if (generator == "Sobol")
-        rng = SobolSeq(Dim)
+        sobol = SobolSeq(Dim)
+        rng = zeros(N, Dim)
+        for i in 1:N
+            temp = next!(sobol)
+            rng[i,:] = temp
+        end
     elseif (generator == "Random")
         rng = rand(N,Dim)
     elseif (generator == "Golden")
         rng = GoldenSequence(Dim)
     else
-        print("RNG must be 'Sobol', 'Golden', or 'Random'. ")
+        println()
+        println("RNG must be 'Sobol', 'Golden', or 'Random'. ")
+        println()
     end
     return rng
 end
-
-function nextRN(rng, i, generator, Geo)
+function nextBoundaryRN(rng, i, generator, Geo, Dim)
     if (Geo == 1)
         if (generator == "Sobol")
-            tmp_rnd = next!(rng)
-            randX = tmp_rnd[1]
-            randMu = tmp_rnd[2]
+            randMu = rng[i,Dim] .+ 1e-9
         elseif (generator == "Random")
-            randX = rng[i,1]
-            randMu = rng[i,2]
+            randMu = rng[i,Dim]
         elseif (generator == "Golden")
-            randX = rng[i][1]
-            randMu = rng[i][2]
+            randMu = rng[i][Dim]
         end
         randPhi = 0
     else
         if (generator == "Sobol")
-            tmp_rnd = next!(rng)
-            randX = tmp_rnd[1]
-            randMu = tmp_rnd[2]
-            randPhi = tmp_rnd[3]
+            randMu = rng[i,Dim]
+            randPhi = rng[i,Dim+1]
         elseif (generator == "Random")
-            randX = rng[i,1]
-            randMu = rng[i,2]
-            randPhi = rng[i,3]
+            randMu = rng[i,Dim]
+            randPhi = rng[i,Dim+1]
         elseif (generator == "Golden")
-            randX = rng[i][1]
-            randMu = rng[i][2]
-            randPhi = rng[i][3]
+            randMu = rng[i][Dim]
+            randPhi = rng[i][Dim+1]
+        end
+    end
+    return (randMu, randPhi)
+end
+
+function nextRN(rng, i, generator, Geo, Dim)
+    if (Geo == 1)
+        if (generator == "Sobol")
+            randX = rng[i,Dim] .+ 1e-9
+            randMu = rng[i,Dim+1].+ 1e-9
+        elseif (generator == "Random")
+            randX = rng[i,Dim]
+            randMu = rng[i,Dim+1]
+        elseif (generator == "Golden")
+            randX = rng[i][Dim]
+            randMu = rng[i][Dim+1]
+        end
+        randPhi = 0
+    else
+        if (generator == "Sobol")
+            randX = rng[i,Dim]
+            randMu = rng[i,Dim+1]
+            randPhi = rng[i,Dim+2]
+        elseif (generator == "Random")
+            randX = rng[i,Dim]
+            randMu = rng[i,Dim+1]
+            randPhi = rng[i,Dim+2]
+        elseif (generator == "Golden")
+            randX = rng[i][Dim]
+            randMu = rng[i][Dim+1]
+            randPhi = rng[i][Dim+2]
         end
     end
     return (randX, randMu, randPhi)
 end
 
 function cellVolume(Geo, zone, low_edges, high_edges)
-    if (Geo == 1)
+    if (Geo == 1) # slab
         return (high_edges[zone] - low_edges[zone])
-    elseif (Geo == 2)
+    elseif (Geo == 2) # cylinder
         return pi*(high_edges[zone]^2 - low_edges[zone]^2)
-    elseif (Geo == 3)
+    elseif (Geo == 3) # sphere
         return (4/3)*pi*(high_edges[zone]^3 - low_edges[zone]^3)
     end
 end
 
+function surfaceArea(Geo, r)
+    if (Geo == 1) # slab
+        return (0.5)
+    elseif (Geo == 2) # cylinder
+        return 2*pi*(r)
+    elseif (Geo == 3) # sphere
+        return (4)*pi*(r^2)
+    end
+end
 
-function sphere_edge(x,y,z,mu,muSin,phi,edge)
+
+function sphere_edge(x,y,z,mu,phi,edge)
     ds = Inf
-    #h = (z*muSin*cos(phi) + y*muSin*sin(phi) + x*mu)
-    h = (x*cos(phi) + y*sin(phi) + z*mu)
+    #h = (x*muSin*cos(phi) + y*muSin*sin(phi) + z*mu)
+    h = (x*sqrt(1-mu^2)*cos(phi) + y*sqrt(1-mu^2)*sin(phi) + z*mu)
     c = x^2 + y^2 + z^2 - edge^2
 
     if (h^2 - c > 0)
@@ -91,7 +127,7 @@ function sphere_edge(x,y,z,mu,muSin,phi,edge)
     return ds
 end
 
-function cylinder_edge(x,y,mu,muSin,phi,edge) #get rid of mu
+function cylinder_edge(x,y,mu,phi,edge) #get rid of mu
     ds = Inf
     #a = muSin*cos(phi)^2 + muSin*sin(phi)^2
     #h = (x*muSin*cos(phi) + y*muSin*sin(phi))
@@ -123,7 +159,7 @@ function slab_edge(mu,x,edge)
     return (edge - x)/mu
 end
 
-function distance_to_edge(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges,zone)
+function distance_to_edge(Geo,x,y,z,mu,phi,low_edges,high_edges,zone)
     # which edge is the particle traveling to
     # distance to edge calc varies by geometry
     if (Geo == 1) # slab
@@ -133,26 +169,39 @@ function distance_to_edge(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges,zone)
             ds = slab_edge(mu,x,low_edges[zone])
         end
     elseif (Geo == 2) # cyliner
-        ds1 = cylinder_edge(x,y,mu,muSin,phi,high_edges[zone])
-        ds2 = cylinder_edge(x,y,mu,muSin,phi,low_edges[zone])
-        if (abs(ds1)<abs(ds2))
+        ds1 = cylinder_edge(x,y,mu,phi,high_edges[zone])
+        ds2 = cylinder_edge(x,y,mu,phi,low_edges[zone])
+        if (abs(ds1)<=abs(ds2))
             ds = ds1
         elseif (abs(ds1)>abs(ds2))
             ds = ds2
         end
     elseif (Geo == 3)
-        ds1 = sphere_edge(x,y,z,mu,muSin,phi,high_edges[zone])
-        ds2 = sphere_edge(x,y,z,mu,muSin,phi,low_edges[zone])
-        if (abs(ds1)<abs(ds2))
+        ds1 = sphere_edge(x,y,z,mu,phi,high_edges[zone])
+        ds2 = sphere_edge(x,y,z,mu,phi,low_edges[zone])
+        if (abs(ds1)<=abs(ds2))
             ds = ds1
         elseif (abs(ds1)>abs(ds2))
             ds = ds2
         end
     end
+    if (!@isdefined ds)
+        println()
+        println("ds1 = ", ds1)
+        println("ds2 = ", ds2)
+        println()
+        println("x = ", x)
+        println("y = ", y)
+        println("z = ", z)
+        println("mu = ", mu)
+        println("phi = ", phi)
+        println("zone = ", zone)
+        println()
+    end
     return (ds)
 end
 
-function updatePosition(Geo,x,y,z,mu,muSin,phi,ds)
+function updatePosition(Geo,x,y,z,mu,phi,ds)
     if (Geo == 2)
         #CYLINDER
         x += ds*cos(phi)
@@ -162,8 +211,8 @@ function updatePosition(Geo,x,y,z,mu,muSin,phi,ds)
         z += ds*mu
         if (Geo == 3)
             #SPHERE
-            x += ds*cos(phi)
-            y += ds*sin(phi)
+            x += ds*sqrt(1-mu^2)*cos(phi)
+            y += ds*sqrt(1-mu^2)*sin(phi)
         end
     end
     return (x,y,z)
@@ -171,21 +220,29 @@ end
 
 function getZone(x,y,z,low_edges,high_edges)
     r = sqrt(x^2 + y^2 + z^2)
-    return argmax(1*(r.>=low_edges).*(r .< high_edges))
+    return argmax((r.>low_edges).*(r .<= high_edges))
 end
 
-function getNextZone(Geo,x,y,z,mu,muSin,phi,ds,low_edges,high_edges)
-    x,y,z = updatePosition(Geo,x,y,z,mu,muSin,phi,ds)
+function getNextZone(Geo,x,y,z,mu,phi,ds,low_edges,high_edges)
+    x,y,z = updatePosition(Geo,x,y,z,mu,phi,ds)
     r = sqrt(x^2 + y^2 + z^2)
-    return argmax(1*(r.>=low_edges).*(r .< high_edges))
+    return argmax((r.>low_edges).*(r .<= high_edges))
+end
+
+function getNextRadius(Geo,x,y,z,mu,phi,ds)
+    x,y,z = updatePosition(Geo,x,y,z,mu,phi,ds)
+    r = sqrt(x^2 + y^2 + z^2)
+    return r
 end
 
 function getRadius(x,y,z)
     return sqrt(x^2 + y^2 + z^2)
 end
 
-function getPath(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges)
+function getPath(Geo,x,y,z,mu,phi,low_edges,high_edges)
+
     zone = getZone(x,y,z,low_edges,high_edges)
+
     if (Geo == 1)
         # direction to sweep
         if (mu >= 0)
@@ -194,7 +251,7 @@ function getPath(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges)
             zoneList = (zone):-1:1 # going left
         end
         # partial zone
-        ds = distance_to_edge(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges,zone)
+        ds = distance_to_edge(Geo,x,y,z,mu,phi,low_edges,high_edges,zone)
         # full zones
         dsList = ones(size(zoneList)[1])*abs(cellVolume(Geo,zone,low_edges,high_edges)/mu)
         dsList[1] = ds
@@ -206,14 +263,39 @@ function getPath(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges)
         # at a time and move the particle
         while (alive)
             zone = getZone(x,y,z,low_edges,high_edges)
-            ds = distance_to_edge(Geo,x,y,z,mu,muSin,phi,low_edges,high_edges,zone) + 1e-9
+            ds = distance_to_edge(Geo,x,y,z,mu,phi,low_edges,high_edges,zone) + 1e-9
             append!(dsList, ds)
             append!(zoneList, zone)
-            x,y,z = updatePosition(Geo,x,y,z,mu,muSin,phi,ds)
-            if (zone == Nx)
+            x,y,z = updatePosition(Geo,x,y,z,mu,phi,ds)
+            if ((zone == Nx) && (ds == Inf))
+                alive = false
+            end
+            if (getRadius(x,y,z) >= high_edges[Nx])
                 alive = false
             end
         end
     end
     return (zoneList, dsList)
+end
+
+function getDim(Geo, hasLeft, hasRight)
+    Dim = 0
+    if (Geo == 1)
+        Dim += 2 # volumetric source dimensions
+        if (hasLeft)
+            Dim += 2
+        end
+        if (hasRight)
+            Dim += 2
+        end
+    else
+        Dim += 3 # volumetric source dimensions
+        if (hasLeft)
+            Dim += 3
+        end
+        if (hasRight)
+            Dim += 3
+        end
+    end
+    return Dim
 end

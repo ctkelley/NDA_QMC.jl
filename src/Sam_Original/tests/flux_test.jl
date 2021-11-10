@@ -23,24 +23,30 @@ siga = readdlm(joinpath(@__DIR__, "../HDPE_data/Siga_12G_HDPE.csv"), ',', Float6
 sigs = readdlm(joinpath(@__DIR__, "../HDPE_data/Scat_12G_HDPE.csv"), ',', Float64)
 sigs = reverse(sigs, dims=2)
 sigt = 1 ./ (3*D)
-#sigt = siga + sum(sigs,dims=2)
 
 ###############################################################################
 #### Parameters
 ###############################################################################
 
-Nx = 50 #number of tally cells
-na2 = 11 #number of angles for angular mesh
-s = [1] #parameter in Garcia/Siewert
-N = 2^11
-geometry = "Sphere"
+Nx = 50     # number of tally cells
+na2 = 11    # number of angles for angular mesh
+s = [1]     # parameter in Garcia/Siewert
+N = 2^11   # number of particles per itertion per source
+LB = 0      # left bound
+RB = 5      # right bound
+geometry = "Cylinder"
+generator = "Sobol"
+
+qmc_data = qmc_init(geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+phi_avg_Sobol, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
 ###############################################################################
 #### Source Iteration Call
 ###############################################################################
-rng = "Sobol"
-qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng, geometry)
-phi_avg_Sobol, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
+
+#rng = "Sobol"
+#qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng, geometry)
+#phi_avg_Sobol, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
 # function calls
 #rng = "Golden"

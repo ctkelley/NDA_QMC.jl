@@ -60,20 +60,8 @@ function qmc_source_iteration(s, qmc_data, tol=1.e-8)
     sigt = qmc_data.sigt
     sigs = qmc_data.sigs
     midpoints = qmc_data.midpoints
-    tempSigt = sigt[1,:]
-    source_strength = 1.0
-    G = size(tempSigt)[1] # number of groups
-    Q = source_strength*ones(G) # source
-    flux = inv(Diagonal(tempSigt[:,1]) .- sigs)*Q
-    """
-    figure(1)
-    plot(midpoints, sum(flux)*ones(Nx), label="Analytic Sol")
-    title("Scalar Flux")
-    ylabel("cell averaged flux")
-    xlabel("midpoints")
-    """
 
-    while itt < 20 && delflux > tol
+    while itt < 10 && delflux > tol
         phi_avg, phi_edge, dphi, J_avg, J_edge = qmc_sweep(phi_avg, qmc_data)
         delflux = norm(phi_avg - phi_avg_old, Inf)
         itt += 1
@@ -81,11 +69,6 @@ function qmc_source_iteration(s, qmc_data, tol=1.e-8)
         phi_avg_old .= phi_avg
         println("**********************")
         println("Iteration: ", itt," change = ",delflux)
-        """
-        figure(1)
-        plot(midpoints, sum(phi_avg, dims=2), label=itt)
-        legend()
-        """
     end
 
     return (phi_avg = phi_avg,

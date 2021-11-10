@@ -1,35 +1,42 @@
+###############################################################################
+#### Packages/Functions
+###############################################################################
+
+include("../qmc_init.jl")
+include("../qmc_sweep.jl")
+include("../qmc_source_iteration.jl")
 using PyPlot
-include("qmc_init.jl")
-include("qmc_source_iteration.jl")
+pygui(true)
 
 ###############################################################################
-#### Inputs
+#### Parameters
 ###############################################################################
-N = 10^4 #number of QMC particles
-Nx = 50 #number of tally cells
-na2 = 11 #number of angles for angular mesh
-s = 1 #parameter in Garcia/Siewert
 
-#phi_edge = qmc_data.phi_edge
+Nx = 50     # number of tally cells
+na2 = 11    # number of angles for angular mesh
+s = [1]     # parameter in Garcia/Siewert
+N = 2^11    # number of particles per source itertion
+LB = 0      # left bound
+RB = 5      # right bound
+geometry = "Slab"
+generator = "Sobol"
+
 ###############################################################################
 #### Function Call
 ###############################################################################
-# initialize qmc
-qmc_data = qmc_init(N, Nx, na2, s)
-# call qmc SI
-phi_avg, phi_edge, dphi, J_avg, J_edge, psi_right, psi_left, history, itt = qmc_source_iteration(s,qmc_data)
 
+qmc_data = garcia_init(geometry, generator, N, LB, RB, Nx, na2, s)
+phi_avg, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
 ###############################################################################
 #### Plotting
 ###############################################################################
-####
+
 iteration = 1:itt
 
 midpoints = qmc_data.midpoints
 edges = qmc_data.edges
 
-####
 figure(figsize = (6,12))
 
 subplot(311)

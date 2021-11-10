@@ -15,6 +15,9 @@ function qmc_sweep(phi_avg, qmc_data)
     G = qmc_data.G
     Geo = qmc_data.Geo
 
+    hasLeft = qmc_data.hasLeft
+    hasRight = qmc_data.hasRight
+
     low_edges = qmc_data.low_edges
     high_edges = qmc_data.high_edges
     midpoints = qmc_data.midpoints
@@ -39,77 +42,97 @@ function qmc_sweep(phi_avg, qmc_data)
     c = qmc_data.c
     generator =qmc_data.generator
 
+    phi_right = qmc_data.phi_right
+    phi_left = qmc_data.phi_left
+
     q = phi_avg*sigs' + source
     phi_avg = zeros(Nx,G)
-    # initialize random number generator
-    rng = rngInit(generator, Geo, N)
-
     #skip(rng,N)
     #skip(rng_bndl,N)
 
-    """
-    #do left boundary source
-    for i in 1:N
-        tmp_rnd = next!(rng_bndl) #for Sobol
-        x = 0                     #start at left boundary
-        fl(mu) =  sqrt(mu)
-        mu = fl(tmp_rnd[1])       #mu in 0 to 1
-        #determine zone (left boundary)
-        zone = 1
-        #compute weight
-        weight = ones(G)*0.5/(N)#1/N*0.5
-        #set phi_edge
-        phi_edge[1,:] = ones(G)#1
-        #total path length across zone
-        ds_zone = dx/abs(mu)
-        J_edge[zone,:] += weight
-        move_part(midpoints,dx,mu,zone,x,Nx,high_edges,low_edges,dxs,weight,ds_zone,
-                  phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
-                  exit_right_bins,exit_left_bins,c)
+    # initialize random number generator, return NxDim matrix
+    totalDim = getDim(Geo, hasLeft, hasRight)
+    rng = rngInit(generator, Geo, N, totalDim)
+    # Dim is used to index the rng matrix
+    Dim = 1
+
+    if (hasLeft)
+        #do left boundary source
+        for i in 1:N
+            randMu, randPhi = nextBoundaryRN(rng, i, generator, Geo, Dim)
+            x = LB                 # start at left boundary
+            fl(mu) =  sqrt(mu)     # isotropic boundary source (point source is uniform)
+            mu = fl(randMu)        # mu in 0 to 1
+            phi = randPhi*2*pi
+            y = z = 0
+            #determine zone (left boundary)
+            zone = 1
+            #compute weight
+            #weight = q[zone,:]/N*cellVolume(Geo, zone, low_edges, high_edges)*Nx
+            weight = phi_left./N*surfaceArea(Geo,x).*ones(G)
+            #set phi_edge
+            phi_edge[1,:] = phi_left.*ones(G)*surfaceArea(Geo,x)
+            #total path length across zone
+            J_edge[zone,:] += weight
+            move_part(  midpoints,mu,x,Nx,high_edges,low_edges,weight,
+                        phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
+                        exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
+        end
+        # add to Dim so the next columns in the rng matrix are indexed
+        if (Geo == 1)
+            Dim += 1
+        else
+            Dim += 2
+        end
     end
-    """
-    """
-    #do right boundary source
-    for i in 1:N
-        tmp_rnd = next!(rng_bndl) #for Sobol
-        x = Lx                     #start at left boundary
-        fl(mu) =  -sqrt(mu)
-        mu = fl(tmp_rnd[1])       #mu in -1 to 0
-        #determine zone (left boundary)
-        zone = Nx
-        #compute weight
-        weight = ones(G)*0.5/(N)#1/N*0.5
-        #set phi_edge
-        phi_edge[Nx,:] = ones(G)#1
-        #total path length across zone
-        ds_zone = dx/abs(mu)
-        J_edge[zone,:] += weight
-        move_part(mu,zone,x,Nx,high_edges,low_edges,dxs,weight,ds_zone,
-                  phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
-                  exit_right_bins,exit_left_bins,c)
+
+    if (hasRight)
+        #do right boundary source
+        for i in 1:N
+            randMu, randPhi = nextBoundaryRN(rng, i, generator, Geo, Dim)
+            x = RB - 1e-9         # start at right boundary
+            fl(mu) =  -sqrt(mu)
+            mu = fl(randMu)       # mu in -1 to 0
+            phi = randPhi*2*pi    # randPhi*pi + pi/2
+            y = z = 0
+            #determine zone (right boundary)
+            zone = Nx
+            #compute weight
+            weight = phi_right./N*surfaceArea(Geo,x).*ones(G)
+            #set phi_edge
+            phi_edge[zone,:] = phi_right.*ones(G)*surfaceArea(Geo,x)
+            #total path length across zone
+            J_edge[zone,:] += weight
+            move_part(  midpoints,mu,x,Nx,high_edges,low_edges,weight,
+                        phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
+                        exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
+        end
+        if (Geo == 1)
+            Dim += 1
+        else
+            Dim += 2
+        end
     end
-    """
+
     #do volumetric source
     for i in 1:N
         #pick starting point and mu
-        randX, randMu, randPhi = nextRN(rng, i, generator, Geo)
+        randX, randMu, randPhi = nextRN(rng, i, generator, Geo, Dim)
         x =  (RB-LB)*randX    # number between 0 and Lx for starting
-        mu = 2*randMu-1   # mu in -1 to 1
-        if (Geo > 1)
-            muSin = sqrt(1-mu^2)
-        else
-            muSin = 0
-        end
+        mu = 2*randMu-1       # mu in -1 to 1
         phi = randPhi*2*pi
         y = z = 0
         #compute initial weight
         zone = getZone(x,y,z,low_edges,high_edges)
-        weight = q[zone,:]/N*cellVolume(Geo, zone, low_edges, high_edges)*Nx
-        #how far does a particle travel when it crosses a zone
-        move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,
-                    phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
-                    exit_right_bins,exit_left_bins,c,phi,muSin,z,y,Geo)
+        if (any(q[zone,:] .> 1e-12))
+            weight = q[zone,:]/N*cellVolume(Geo, zone, low_edges, high_edges)*Nx
+            #how far does a particle travel when it crosses a zone
+            move_part(  midpoints,mu,x,Nx,high_edges,low_edges,weight,
+                        phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
+                        exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
+        end
     end
+
 
     return (phi_avg = phi_avg,
             phi_edge = phi_edge,
