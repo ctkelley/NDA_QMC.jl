@@ -59,6 +59,7 @@ ylabel("J avg")
 xlabel("midpoints")
 title("Cell Averaged Current")
 
+"""
 #left exit bins
 figure(figsize = (5,10))
 subplot(211)
@@ -84,3 +85,4 @@ plot(psi_right[:,1], psi_right[:,2], label="QMC_sweep")
 xlabel("mu")
 ylabel("Right Boundary - Angular Flux Dist.")
 legend()
+"""

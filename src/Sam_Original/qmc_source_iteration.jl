@@ -43,7 +43,7 @@ include("qmc_sweep.jl")
 """
 
 
-function qmc_source_iteration(s, qmc_data, tol=1.e-8)
+function qmc_source_iteration(s, qmc_data, tol=1.e-5)
     # precomputed data
     N = qmc_data.N
     Nx = qmc_data.Nx

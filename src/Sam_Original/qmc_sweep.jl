@@ -45,7 +45,8 @@ function qmc_sweep(phi_avg, qmc_data)
     phi_right = qmc_data.phi_right
     phi_left = qmc_data.phi_left
 
-    q = phi_avg*sigs' + source
+    #q = phi_avg*sigs' + source # multi group data
+    q =  phi_avg.*sigs + source # garcia tests
     phi_avg = zeros(Nx,G)
     #skip(rng,N)
     #skip(rng_bndl,N)
