@@ -1,4 +1,6 @@
 using LinearAlgebra
+using PyPlot
+pygui(true)
 include("qmc_sweep.jl")
 """
  qmc_source_iteration(s, qmc_data,tol=1.e-8)
@@ -41,7 +43,7 @@ include("qmc_sweep.jl")
 """
 
 
-function qmc_source_iteration(s, qmc_data, tol=1.e-8)
+function qmc_source_iteration(s, qmc_data, tol=1.e-5)
     # precomputed data
     N = qmc_data.N
     Nx = qmc_data.Nx
@@ -55,7 +57,11 @@ function qmc_source_iteration(s, qmc_data, tol=1.e-8)
     # initialize global variables
     phi_edge = dphi = J_avg = J_edge = exit_right_bins = exit_left_bins = 0
 
-    while itt < 50 && delflux > tol
+    sigt = qmc_data.sigt
+    sigs = qmc_data.sigs
+    midpoints = qmc_data.midpoints
+
+    while itt < 10 && delflux > tol
         phi_avg, phi_edge, dphi, J_avg, J_edge = qmc_sweep(phi_avg, qmc_data)
         delflux = norm(phi_avg - phi_avg_old, Inf)
         itt += 1
