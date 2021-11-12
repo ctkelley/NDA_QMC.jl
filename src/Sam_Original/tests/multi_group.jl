@@ -33,29 +33,12 @@ na2 = 11    # number of angles for angular mesh
 s = [1]     # parameter in Garcia/Siewert
 N = 2^11   # number of particles per itertion per source
 LB = 0      # left bound
-RB = 5      # right bound
-geometry = "Cylinder"
+RB = 500      # right bound
+geometry = "Slab"
 generator = "Sobol"
 
 qmc_data = qmc_init(geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 phi_avg_Sobol, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
-
-###############################################################################
-#### Source Iteration Call
-###############################################################################
-
-#rng = "Sobol"
-#qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng, geometry)
-#phi_avg_Sobol, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
-
-# function calls
-#rng = "Golden"
-#qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
-#phi_avg_Golden, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
-
-#rng = "Random"
-#qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt, rng)
-#phi_avg_Random, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
 ###############################################################################
 #### Analytic Solution
@@ -96,69 +79,3 @@ end
 ylabel("cell averaged flux")
 xlabel("midpoints")
 legend()
-
-
-
-"""
-figure()
-plot(1:G, abs.(mean(phi_avg_Sobol, dims=1)'[:,1]-flux), label="Sobol")
-#plot(1:G, abs.(mean(phi_avg_Golden, dims=1)'[:,1]-flux), label="Golden")
-#plot(1:G, abs.(mean(phi_avg_Random, dims=1)'[:,1]-flux), label="Random")
-ylabel("Mean Absolute Error")
-xlabel("Group")
-title("Average Group Error")
-legend()
-"""
-###############################################################################
-#### Single Function Call
-###############################################################################
-"""
-N = 2^14
-#sigs = sum(sigs, dims=2)
-sigt = [3,3,3]
-sigs = [1.5,1.5,1.5]
-
-qmc_data = qmc_init(N, Nx, na2, s, sigs, sigt)
-phi_avg, phi_edge, dphi, J_avg, J_edge = qmc_sweep(qmc_data)
-midpoints = qmc_data.midpoints
-edges = qmc_data.edges
-
-G = size(sigt)[1] # number of groups
-Q = 1.0 # source strength
-flux = inv(Diagonal(sigt[:,1] - sigs[:,1]))*Q # returns diagonal matrix
-flux = sum(sum(flux,dims=2))*ones(Nx) # sum across groups
-
-figure(2)
-title("Average Scalar Flux")
-plot(midpoints,phi_avg, label="QMC")
-plot(midpoints,flux,label="Infinite Medium Sol")
-ylabel("cell averaged flux")
-xlabel("midpoints")
-legend()
-"""
-
-###############################################################################
-#### Single Function Loop
-###############################################################################
-"""
-N = [2^8, 2^11, 2^14, 2^17]
-figure(1, figsize = (20,4))
-for i in 1:length(N)
-    # initialize qmc
-    qmc_data = qmc_init(N[i], Nx, na2, s, sigs, sigt)
-    # call qmc SI
-    phi_avg, phi_edge, dphi, J_avg, J_edge = qmc_sweep(qmc_data)
-
-    # Plotting
-    midpoints = qmc_data.midpoints
-    edges = qmc_data.edges
-    #edge flux
-    num = 150 + i
-    subplot(num)
-    suptitle("Average Scalar Flux")
-    plot(midpoints,phi_avg)
-    ylabel("cell averaged flux")
-    xlabel("midpoints")
-
-end
-"""

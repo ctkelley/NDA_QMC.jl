@@ -239,7 +239,7 @@ function getRadius(x,y,z)
     return sqrt(x^2 + y^2 + z^2)
 end
 
-function getPath(Geo,x,y,z,mu,phi,low_edges,high_edges)
+function getPath(Geo,x,y,z,mu,phi,low_edges,high_edges,Nx)
 
     zone = getZone(x,y,z,low_edges,high_edges)
 
@@ -298,4 +298,33 @@ function getDim(Geo, hasLeft, hasRight)
         end
     end
     return Dim
+end
+
+function inf_Med_BC_Mu(rn, x, siga)
+    # parameters
+    siga = siga[1]
+    q0 = 0.75
+    q1 = 0.5
+
+    denominator = q0/(2*siga) + x*q1/(2*siga) - q1/(3*siga^2)
+    f(mu) = (mu^2*q0/(2*siga) + mu^2*x*q1/(2*siga) - mu^3*q1/(3*siga^2))/denominator - rn
+
+    a = 0
+    b = 1
+    N=0
+    c = 0
+    maxiter = 100
+    tol = 1e-8
+
+    # bisection method
+    while (N<=maxiter) && ((b-a)*0.5 > tol)
+        c = (a+b)*0.5
+        if ((f(c)<0) && (f(a)<0)) || ((f(c)>0) && (f(a)>0))
+            a = c
+        else
+            b = c
+        end
+        N += 1
+    end
+    return c
 end
