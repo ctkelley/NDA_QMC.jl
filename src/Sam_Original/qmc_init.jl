@@ -183,7 +183,7 @@ function garcia_init(Geometry, generator, N, LB, RB, Nx, na2, s)
 end
 
 
-function infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+function const_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 
         hasLeft = true
         hasRight = true
@@ -220,7 +220,7 @@ function infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
         sigt = temp1
         source_strength = 1.0
         source = source_strength*ones(Nx,G)
-
+        phi_true = source./siga
         # phi_avg is defaulted to = zeros(Nx)
         phi_edge = zeros(Nx+1,G)
         phi_avg = source_strength*zeros(Nx,G)
@@ -256,6 +256,7 @@ function infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
                             dmu = dmu,
                             exit_left_bins = exit_left_bins,
                             exit_right_bins = exit_right_bins,
+                            phi_true = phi_true,
                             phi_edge = phi_edge,
                             phi_avg = phi_avg,
                             phi_left = phi_left,
@@ -314,8 +315,8 @@ function linear_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, si
         end
         sigt = temp1
 
-        q0 = 0.5
-        q1 = 0.75
+        q0 = 0.75
+        q1 = 0.5
         source_strength(x) = q0 .+ q1.*x
         source = source_strength(midpoints).*ones(Nx,G)
         solution(x) = source_strength(x)./siga
@@ -366,6 +367,7 @@ function linear_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, si
                             J_edge = J_edge,
                             sigt = sigt,
                             sigs = sigs,
+                            siga = siga,
                             source = source,
                             c = c,
                             generator = generator,

@@ -15,7 +15,7 @@ pygui(true)
 Nx = 50     # number of tally cells
 na2 = 11    # number of angles for angular mesh
 s = [1]     # parameter in Garcia/Siewert
-N = 2^11    # number of particles per source itertion
+N = 2^15    # number of particles per source itertion
 LB = 0      # left bound
 RB = 5      # right bound
 geometry = "Slab"
@@ -26,7 +26,7 @@ generator = "Sobol"
 ###############################################################################
 
 qmc_data = garcia_init(geometry, generator, N, LB, RB, Nx, na2, s)
-phi_avg, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
+phi_avg, phi_edge, dphi, J_avg, J_edge, psi_right, psi_left, history, itt = qmc_source_iteration(s,qmc_data)
 
 ###############################################################################
 #### Plotting
@@ -59,7 +59,7 @@ ylabel("J avg")
 xlabel("midpoints")
 title("Cell Averaged Current")
 
-"""
+
 #left exit bins
 figure(figsize = (5,10))
 subplot(211)
@@ -85,4 +85,3 @@ plot(psi_right[:,1], psi_right[:,2], label="QMC_sweep")
 xlabel("mu")
 ylabel("Right Boundary - Angular Flux Dist.")
 legend()
-"""

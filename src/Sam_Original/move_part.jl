@@ -5,7 +5,7 @@ function move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,
                     exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
 
     # collect list of zones crossed and path lengths in each
-    zoneList, dsList = getPath(Geo,x,y,z,mu,phi,low_edges,high_edges)
+    zoneList, dsList = getPath(Geo,x,y,z,mu,phi,low_edges,high_edges,Nx)
     counter = 1
 
     # sweep through all zones
@@ -22,16 +22,29 @@ function move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,
                              .- ds*exp.(-sigt[z_prop,:]*ds)))./sigt[z_prop,:]./cellVolume(Geo,z_prop,low_edges,high_edges)
         weight            .*= exp.(-(ds*sigt[z_prop,:]))
 
-        if (mu > 0)
-            J_edge[z_prop+1,:]   += weight
-            phi_edge[z_prop+1,:] += weight./abs(mu)
-        else
-            J_edge[z_prop,:]   -= weight
-            phi_edge[z_prop,:] += weight./abs(mu)
+        # edge angular flux tally.
+        # only configured for slab geometry, intended for Garcia et al problem
+        if (Geo == 1)
+            if (mu > 0)
+                J_edge[z_prop+1,:]   += weight
+                phi_edge[z_prop+1,:] += weight./abs(mu)
+                if (z_prop == last(zoneList))
+                    # add to the exiting flux - find the bin and add it to that one
+                    exit_right_bins[argmin(abs.(exit_right_bins[:,1] .- mu)),2] += (weight/mu)[1]
+                end
+            else
+                J_edge[z_prop,:]   -= weight
+                phi_edge[z_prop,:] += weight./abs(mu)
+                if (z_prop == last(zoneList))
+                    # add to the exiting flux - find the bin and add it to that one
+                    exit_left_bins[argmin(abs.(exit_left_bins[:,1] .- mu)),2] += (weight/abs(mu))[1]
+                end
+            end
         end
+
         counter += 1
     end
-        #add to the exiting flux - find the bin and add it to that one
+
         #exit_left_bins[argmin(abs.(exit_left_bins[:,1] .- mu)),2] += weight/abs(mu)
     return
 end

@@ -37,6 +37,7 @@ function qmc_sweep(phi_avg, qmc_data)
     J_edge = qmc_data.J_edge
 
     sigt = qmc_data.sigt
+    #siga = qmc_data.siga
     source = qmc_data.source
     sigs = qmc_data.sigs
     c = qmc_data.c
@@ -46,7 +47,7 @@ function qmc_sweep(phi_avg, qmc_data)
     phi_left = qmc_data.phi_left
 
     #q = phi_avg*sigs' + source # multi group data
-    q =  phi_avg.*sigs + source # garcia tests
+    q =  phi_avg.*sigs + source # garcia tests and infinite medium problems
     phi_avg = zeros(Nx,G)
     #skip(rng,N)
     #skip(rng_bndl,N)
@@ -61,9 +62,10 @@ function qmc_sweep(phi_avg, qmc_data)
         #do left boundary source
         for i in 1:N
             randMu, randPhi = nextBoundaryRN(rng, i, generator, Geo, Dim)
-            x = LB                 # start at left boundary
+            x = LB + 1e-9          # start at left boundary
             fl(mu) =  sqrt(mu)     # isotropic boundary source (point source is uniform)
             mu = fl(randMu)        # mu in 0 to 1
+            #mu = inf_Med_BC_Mu(randMu, x, siga)
             phi = randPhi*2*pi
             y = z = 0
             #determine zone (left boundary)
@@ -94,7 +96,8 @@ function qmc_sweep(phi_avg, qmc_data)
             x = RB - 1e-9         # start at right boundary
             fl(mu) =  -sqrt(mu)
             mu = fl(randMu)       # mu in -1 to 0
-            phi = randPhi*2*pi    # randPhi*pi + pi/2
+            #mu = -inf_Med_BC_Mu(randMu, x, siga)
+            phi = randPhi*2*pi
             y = z = 0
             #determine zone (right boundary)
             zone = Nx
@@ -134,10 +137,14 @@ function qmc_sweep(phi_avg, qmc_data)
         end
     end
 
+    exit_left_bins[:,2] /= dmu
+    exit_right_bins[:,2] /= dmu
 
     return (phi_avg = phi_avg,
             phi_edge = phi_edge,
             dphi = dphi,
             J_avg = J_avg,
-            J_edge = J_edge)
+            J_edge = J_edge,
+            exit_right_bins = exit_right_bins,
+            exit_left_bins = exit_left_bins)
 end

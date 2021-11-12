@@ -61,8 +61,8 @@ function qmc_source_iteration(s, qmc_data, tol=1.e-5)
     sigs = qmc_data.sigs
     midpoints = qmc_data.midpoints
 
-    while itt < 10 && delflux > tol
-        phi_avg, phi_edge, dphi, J_avg, J_edge = qmc_sweep(phi_avg, qmc_data)
+    while itt < 20 && delflux > tol
+        phi_avg, phi_edge, dphi, J_avg, J_edge, exit_right_bins, exit_left_bins = qmc_sweep(phi_avg, qmc_data)
         delflux = norm(phi_avg - phi_avg_old, Inf)
         itt += 1
         push!(reshist, delflux)
@@ -76,6 +76,8 @@ function qmc_source_iteration(s, qmc_data, tol=1.e-5)
             dphi = dphi,
             J_avg = J_avg,
             J_edge = J_edge,
+            exit_right_bins = exit_right_bins,
+            exit_left_bins = exit_left_bins,
             history = reshist,
             itt = itt)
 end
