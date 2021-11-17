@@ -2,10 +2,39 @@
 using PyPlot
 pygui(true)
 
+function bisection(f, a, b, tol=1e-5, maxiter=100)
+    fa = f(a)
+    fa*f(b) <= 0 || error("No real root in [a,b]")
+    i = 0
+    local c
+    while b-a > tol
+        i += 1
+        i != maxiter || error("Max iteration exceeded")
+        c = (a+b)/2
+        fc = f(c)
+        if fc == 0
+            break
+        elseif fa*fc > 0
+            a = c  # Root is in the right half of [a,b].
+            fa = fc
+        else
+            b = c  # Root is in the left half of [a,b].
+        end
+    end
+    return c
+end
+
+
 function aniso(rn)
-    siga = 1
+    """
+    anisotropic solve.
+
+    given a random number [0,1] solve for the respective mu using
+    direct inversion sampling
+    """
+    siga = 1.0
     q0 = 0.75
-    q1 = 0.5
+    q1 = 0.0
     z = 0
 
     denominator = q0/(2*siga) + z*q1/(2*siga) - q1/(3*siga^2)
@@ -16,28 +45,27 @@ function aniso(rn)
     c = 0
     N=0
     maxiter = 100
-    tol = 1e-8
-    # bisection method
-    while (N<=maxiter) && ((b-a)*0.5 > tol)
-        c = (a+b)*0.5
-        if ((f(c)<0) && (f(a)<0)) || ((f(c)>0) && (f(a)>0))
-            a = c
-        else
-            b = c
-        end
-        N += 1
-    end
-    return c
+    tol = 1e-6
+
+    mu = bisection(f, a, b, tol, maxiter)
+
+    return mu
 end
 
 function iso(rn)
+    """
+    direct inversion sampling of isotropic source
+    """
     return sqrt(rn)
 end
 
 function cdf()
+    """
+    CDF of anisotropic distribution
+    """
     siga = 1
     q0 = 1.0
-    q1 = 0.75
+    q1 = 0.0
     z = 0
 
     denominator = q0/(2*siga) + z*q1/(2*siga) - q1/(3*siga^2)
@@ -52,7 +80,6 @@ end
 
 
 cdf()
-
 N = 100000
 mus1 = zeros(N)
 mus2 = zeros(N)

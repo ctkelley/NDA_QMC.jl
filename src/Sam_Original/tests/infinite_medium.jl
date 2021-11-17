@@ -15,10 +15,10 @@ pygui(true)
 Nx = 40     # number of tally cells
 na2 = 11    # number of angles for angular mesh
 s = [1]     # parameter in Garcia/Siewert
-N = 2^11    # number of particles per source itertion
+N = 2^13    # number of particles per source itertion
 LB = 0      # left bound
-RB = 10      # right bound
-sigt = [1.0]
+RB = 2      # right bound
+sigt = [2.0]
 sigs = 0.5*sigt
 siga = sigt - sigs
 geometry = "Slab"   # infinite medium problems are only configured for slab geometries right now
@@ -28,10 +28,8 @@ generator = "Sobol"
 #### Function Call
 ###############################################################################
 
-qmc_data = const_infMed_init(geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
-@time begin
+qmc_data = linear_infMed_init(geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 phi_avg, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
-end
 
 ###############################################################################
 #### Plotting

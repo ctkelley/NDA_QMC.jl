@@ -17,9 +17,7 @@ function rngInit(generator, Geo, N, Dim)
     elseif (generator == "Golden")
         rng = GoldenSequence(Dim)
     else
-        println()
-        println("RNG must be 'Sobol', 'Golden', or 'Random'. ")
-        println()
+        error("RNG must be 'Sobol', 'Golden', or 'Random'. ")
     end
     return rng
 end
@@ -129,8 +127,6 @@ end
 
 function cylinder_edge(x,y,mu,phi,edge) #get rid of mu
     ds = Inf
-    #a = muSin*cos(phi)^2 + muSin*sin(phi)^2
-    #h = (x*muSin*cos(phi) + y*muSin*sin(phi))
     a = cos(phi)^2 + sin(phi)^2
     h = (x*cos(phi) + y*sin(phi))
     c = x^2 + y^2 - edge^2
@@ -184,19 +180,6 @@ function distance_to_edge(Geo,x,y,z,mu,phi,low_edges,high_edges,zone)
         elseif (abs(ds1)>abs(ds2))
             ds = ds2
         end
-    end
-    if (!@isdefined ds)
-        println()
-        println("ds1 = ", ds1)
-        println("ds2 = ", ds2)
-        println()
-        println("x = ", x)
-        println("y = ", y)
-        println("z = ", z)
-        println("mu = ", mu)
-        println("phi = ", phi)
-        println("zone = ", zone)
-        println()
     end
     return (ds)
 end
@@ -311,20 +294,31 @@ function inf_Med_BC_Mu(rn, x, siga)
 
     a = 0
     b = 1
-    N=0
-    c = 0
     maxiter = 100
     tol = 1e-8
+    mu = bisection(f, a, b, tol, maxiter)
 
-    # bisection method
-    while (N<=maxiter) && ((b-a)*0.5 > tol)
-        c = (a+b)*0.5
-        if ((f(c)<0) && (f(a)<0)) || ((f(c)>0) && (f(a)>0))
-            a = c
+    return mu
+end
+
+function bisection(f, a, b, tol=1e-5, maxiter=100)
+    fa = f(a)
+    fa*f(b) <= 0 || error("No real root in [a,b]")
+    i = 0
+    local c
+    while b-a > tol
+        i += 1
+        i != maxiter || error("Max iteration exceeded")
+        c = (a+b)/2
+        fc = f(c)
+        if fc == 0
+            break
+        elseif fa*fc > 0
+            a = c  # Root is in the right half of [a,b].
+            fa = fc
         else
-            b = c
+            b = c  # Root is in the left half of [a,b].
         end
-        N += 1
     end
     return c
 end

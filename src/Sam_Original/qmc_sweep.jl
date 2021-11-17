@@ -57,22 +57,25 @@ function qmc_sweep(phi_avg, qmc_data)
     rng = rngInit(generator, Geo, N, totalDim)
     # Dim is used to index the rng matrix
     Dim = 1
+    q0 = 0.75
+    q1 = 0.5
 
     if (hasLeft)
         #do left boundary source
         for i in 1:N
             randMu, randPhi = nextBoundaryRN(rng, i, generator, Geo, Dim)
             x = LB + 1e-9          # start at left boundary
-            fl(mu) =  sqrt(mu)     # isotropic boundary source (point source is uniform)
-            mu = fl(randMu)        # mu in 0 to 1
-            #mu = inf_Med_BC_Mu(randMu, x, siga)
+            #fl(mu) =  sqrt(mu)     # isotropic boundary source (point source is uniform)
+            #mu = fl(randMu)        # mu in 0 to 1
+            mu = inf_Med_BC_Mu(randMu, x, siga)
             phi = randPhi*2*pi
             y = z = 0
             #determine zone (left boundary)
             zone = 1
             #compute weight
             #weight = q[zone,:]/N*cellVolume(Geo, zone, low_edges, high_edges)*Nx
-            weight = phi_left./N*surfaceArea(Geo,x).*ones(G)
+            weight = 2*mu*(q0/(2*siga) .+ (x.-mu./siga)*q1./(2*siga))./N*surfaceArea(Geo,x).*ones(G)#
+            #weight = phi_left./N*surfaceArea(Geo,x).*ones(G)
             #set phi_edge
             phi_edge[1,:] = phi_left.*ones(G)*surfaceArea(Geo,x)
             #total path length across zone
@@ -93,16 +96,17 @@ function qmc_sweep(phi_avg, qmc_data)
         #do right boundary source
         for i in 1:N
             randMu, randPhi = nextBoundaryRN(rng, i, generator, Geo, Dim)
-            x = RB - 1e-9         # start at right boundary
-            fl(mu) =  -sqrt(mu)
-            mu = fl(randMu)       # mu in -1 to 0
-            #mu = -inf_Med_BC_Mu(randMu, x, siga)
+            x = RB - 1e-9          # start at right boundary
+            #fl(mu) =  -sqrt(mu)
+            #mu = fl(randMu)       # mu in -1 to 0
+            mu = -inf_Med_BC_Mu(randMu, x, siga)
             phi = randPhi*2*pi
             y = z = 0
             #determine zone (right boundary)
             zone = Nx
             #compute weight
-            weight = phi_right./N*surfaceArea(Geo,x).*ones(G)
+            weight = 2*mu*(q0/(2*siga) .+ (x.-mu./siga)*q1./(2*siga))./N*surfaceArea(Geo,x).*ones(G)#phi_right./N*surfaceArea(Geo,x).*ones(G)
+            #weight = phi_right./N*surfaceArea(Geo,x).*ones(G)
             #set phi_edge
             phi_edge[zone,:] = phi_right.*ones(G)*surfaceArea(Geo,x)
             #total path length across zone
