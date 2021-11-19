@@ -1,4 +1,12 @@
+"""
+The functions below used to precompute data for various problem types.
+"""
 
+"""
+    qmc_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+General init function not specific to any problem type. Originally used for Garcia/
+Siewart problems.
+"""
 function qmc_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 
         hasLeft = false
@@ -91,6 +99,12 @@ function qmc_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
         return qmc_data
 end
 
+"""
+    garcia_init(Geometry, generator, N, LB, RB, Nx, na2, s)
+Problem set up for Garcia/Siewart paper. Characterized by left boundary source
+and spatially dependent scattering cross section.
+JQSRT (27), 1982 pp 141-148.
+"""
 function garcia_init(Geometry, generator, N, LB, RB, Nx, na2, s)
 
         hasLeft = true
@@ -182,7 +196,10 @@ function garcia_init(Geometry, generator, N, LB, RB, Nx, na2, s)
         return qmc_data
 end
 
-
+"""
+    const_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+Infinite medium problem with a constant volumetric source.
+"""
 function const_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 
         hasLeft = true
@@ -279,6 +296,10 @@ function const_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sig
         return qmc_data
 end
 
+"""
+    linear_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+Infinite medium problem with a spatially linear dependent source.
+"""
 function linear_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 
         hasLeft = true
@@ -380,6 +401,10 @@ function linear_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, si
         return qmc_data
 end
 
+"""
+    quadratic_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+Infinite medium problem with a spatially quadratic source.
+"""
 function quadratic_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 
         hasLeft = true

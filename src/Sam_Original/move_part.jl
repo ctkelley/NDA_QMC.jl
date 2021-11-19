@@ -1,5 +1,12 @@
 include("misc_functions.jl")
 
+"""
+    move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,
+    phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
+    exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
+
+Sweep particle from emission site out of volume while tallying flux and current.
+"""
 function move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,
                     phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
                     exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
@@ -44,7 +51,5 @@ function move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,
 
         counter += 1
     end
-
-        #exit_left_bins[argmin(abs.(exit_left_bins[:,1] .- mu)),2] += weight/abs(mu)
     return
 end

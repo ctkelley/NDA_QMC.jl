@@ -6,6 +6,17 @@ using PyPlot
 pygui(true)
 import Distributions: Uniform
 
+"""
+    qmc_sweep(phi_avg, qmc_data)
+Performs one sweep of N particles per source (left boundary, right boundary,
+volumetric). Returns flux values for iteration.
+
+...
+# Arguments
+* `phi_avg::Array{Float64,2}`: (Nx)xG matrix of scalar flux values.
+* `qmc_data::NamedTuple`: various problem initializiations in qmc_init.jl.
+...
+"""
 function qmc_sweep(phi_avg, qmc_data)
 
     N = qmc_data.N
@@ -54,7 +65,7 @@ function qmc_sweep(phi_avg, qmc_data)
 
     # initialize random number generator, return NxDim matrix
     totalDim = getDim(Geo, hasLeft, hasRight)
-    rng = rngInit(generator, Geo, N, totalDim)
+    rng = rngInit(generator, N, totalDim)
     # Dim is used to index the rng matrix
     Dim = 1
 
