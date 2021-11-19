@@ -29,20 +29,19 @@ geometry = "Slab"
 generator = "Sobol"
 
 qmc_data = multiGroup_init(geometry, generator, N, LB, RB, Nx, G)
-phi_avg_Sobol, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
+phi_avg, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
 
 ###############################################################################
 #### Plots
 ###############################################################################
 midpoints = qmc_data.midpoints
+edges = qmc_data.edges
 sol = qmc_data.true_flux
 
 figure()
 title("Scalar Flux")
-plot(midpoints, sum(phi_avg_Sobol, dims=2), label="Sobol")
-#plot(midpoints, sum(phi_avg_Golden, dims=2), label="Golden")
-#plot(midpoints, sum(phi_avg_Random, dims=2), label="Random")
-#plot(midpoints, sum(flux)*ones(Nx), label="Analytic Sol")
+plot(midpoints, sum(phi_avg, dims=2), label=generator)
+plot(edges, sum(phi_edge, dims=2), label="edges")
 ylabel("cell averaged flux")
 xlabel("midpoints")
 legend()
@@ -56,10 +55,9 @@ color_sequence = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c",
                   "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"]
 title("Group Scalar Flux")
 for i in 1:1:G
-    plot(midpoints, phi_avg_Sobol[:,i], label=i,color=color_sequence[i] ) #color=color_sequence[i]
+    plot(midpoints, phi_avg[:,i], label=i,color=color_sequence[i] ) #color=color_sequence[i]
     plot(midpoints,sol[i]*ones(Nx),"--",color=color_sequence[i] )
 end
-#plot(midpoints,phi_avg, label="QMC")
 ylabel("cell averaged flux")
 xlabel("midpoints")
 legend()

@@ -309,7 +309,7 @@ end
     const_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 Infinite medium problem with a constant volumetric source.
 """
-function const_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+function const_infMed_init(Geometry, generator, N, LB, RB, Nx, sigs, sigt)
 
         hasLeft = true
         hasRight = true
@@ -328,6 +328,8 @@ function const_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sig
         #the first column has the bin centers and
         #and the second holds the values.
         #exit_right_bins is the same
+        na2 = 11    # number of angles for angular mesh
+        s = [1]
         dmu = 1/na2
         #right bins
         exit_right_bins = zeros((na2,2))
@@ -409,7 +411,7 @@ end
     linear_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 Infinite medium problem with a spatially linear dependent source.
 """
-function linear_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+function linear_infMed_init(Geometry, generator, N, LB, RB, Nx, sigs, sigt)
 
         hasLeft = true
         hasRight = true
@@ -428,6 +430,8 @@ function linear_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, si
         #the first column has the bin centers and
         #and the second holds the values.
         #exit_right_bins is the same
+        na2 = 11    # number of angles for angular mesh
+        s = [1]
         dmu = 1/na2
         #right bins
         exit_right_bins = zeros((na2,2))
@@ -514,7 +518,7 @@ end
     quadratic_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 Infinite medium problem with a spatially quadratic source.
 """
-function quadratic_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+function quadratic_infMed_init(Geometry, generator, N, LB, RB, Nx, sigs, sigt)
 
         hasLeft = true
         hasRight = true
@@ -529,10 +533,6 @@ function quadratic_infMed_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs,
         edges = range(LB, stop=RB, length=Nx+1)
 
         #define angular flux mesh
-        #exit_left_bins data structure to hold the exiting angular flux,
-        #the first column has the bin centers and
-        #and the second holds the values.
-        #exit_right_bins is the same
         dmu = 1/na2
         #right bins
         exit_right_bins = zeros((na2,2))

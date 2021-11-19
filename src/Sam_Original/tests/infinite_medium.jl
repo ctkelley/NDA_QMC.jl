@@ -13,8 +13,6 @@ pygui(true)
 ###############################################################################
 
 Nx = 40     # number of tally cells
-na2 = 11    # number of angles for angular mesh
-s = [1]     # parameter in Garcia/Siewert
 N = 2^11    # number of particles per source itertion
 LB = 0      # left bound
 RB = 10     # right bound
@@ -28,9 +26,9 @@ generator = "Sobol"
 #### Function Call
 ###############################################################################
 
-qmc_data = const_infMed_init(geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
+qmc_data = const_infMed_init(geometry, generator, N, LB, RB, Nx, sigs, sigt)
 @time begin
-phi_avg, phi_edge, dphi, J_avg, J_edge, history, itt = qmc_source_iteration(s,qmc_data)
+phi_avg, phi_edge, dphi, J_avg, J_edge, psi_right, psi_left, history, itt = qmc_source_iteration(qmc_data,1.e-3)
 end
 
 ###############################################################################
@@ -40,8 +38,11 @@ midpoints = qmc_data.midpoints
 flux = qmc_data.phi_avg
 sol = qmc_data.phi_true
 
+edges = qmc_data.edges
+
 figure()
-plot(midpoints, flux, label = generator)
+plot(midpoints, phi_avg, label = generator)
+plot(edges, phi_edge, label="edges")
 plot(midpoints, sol, label= "solution")
 ylabel("Cell Average Flux")
 xlabel("Cell Midpoints")
