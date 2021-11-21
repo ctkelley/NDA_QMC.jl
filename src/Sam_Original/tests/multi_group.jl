@@ -1,18 +1,6 @@
 """
 Sam Pasmann
 """
-###############################################################################
-#### Packages/Functions
-###############################################################################
-
-include("../qmc_init.jl")
-include("../qmc_sweep.jl")
-include("../qmc_source_iteration.jl")
-using PyPlot
-using DelimitedFiles
-using LinearAlgebra
-using Statistics
-pygui(true)
 
 ###############################################################################
 #### Parameters

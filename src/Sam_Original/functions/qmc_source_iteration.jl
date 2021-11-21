@@ -1,7 +1,3 @@
-using LinearAlgebra
-using PyPlot
-pygui(true)
-include("qmc_sweep.jl")
 
 """
      qmc_source_iteration(s, qmc_data,tol=1.e-8)

@@ -1,4 +1,3 @@
-include("misc_functions.jl")
 
 """
     move_part(midpoints,mu,x,Nx,high_edges,low_edges,weight,

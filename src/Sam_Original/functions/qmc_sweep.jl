@@ -1,10 +1,3 @@
-include("move_part.jl")
-using Sobol
-using GoldenSequences
-using Random
-using PyPlot
-pygui(true)
-import Distributions: Uniform
 
 """
     qmc_sweep(phi_avg, qmc_data)

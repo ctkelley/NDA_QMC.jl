@@ -1,6 +1,4 @@
 
-using PyPlot
-pygui(true)
 
 function aniso(rn)
     siga = 1

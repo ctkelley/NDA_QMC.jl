@@ -1,29 +1,8 @@
 """
 Sam Pasmann
+
+Outddated function calls
 """
-###############################################################################
-#### Packages/Functions
-###############################################################################
-
-include("qmc_init.jl")
-include("qmc_sweep.jl")
-include("qmc_source_iteration.jl")
-using PyPlot
-using DelimitedFiles
-using LinearAlgebra
-using Statistics
-pygui(true)
-
-###############################################################################
-#### Import Cross Section Data
-###############################################################################
-
-D = readdlm(joinpath(@__DIR__, "HDPE_data/D_12G_HDPE.csv"), ',', Float64)
-siga = readdlm(joinpath(@__DIR__, "HDPE_data/Siga_12G_HDPE.csv"), ',', Float64)
-sigs = readdlm(joinpath(@__DIR__, "HDPE_data/Scat_12G_HDPE.csv"), ',', Float64)
-sigs = sigs
-sigt = 1 ./ (3*D)
-#sigt = siga + sum(sigs,dims=2)
 
 ###############################################################################
 #### Parameters
