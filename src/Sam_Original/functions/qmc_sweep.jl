@@ -1,11 +1,15 @@
-include("move_part.jl")
-using Sobol
-using GoldenSequences
-using Random
-using PyPlot
-pygui(true)
-import Distributions: Uniform
 
+"""
+    qmc_sweep(phi_avg, qmc_data)
+Performs one sweep of N particles per source (left boundary, right boundary,
+volumetric). Returns flux values for iteration.
+
+...
+# Arguments
+* `phi_avg::Array{Float64,2}`: (Nx)xG matrix of scalar flux values.
+* `qmc_data::NamedTuple`: various problem initializiations in qmc_init.jl.
+...
+"""
 function qmc_sweep(phi_avg, qmc_data)
 
     N = qmc_data.N
@@ -30,11 +34,11 @@ function qmc_sweep(phi_avg, qmc_data)
     exit_left_bins[:,2] .= 0
     exit_right_bins[:,2] .= 0
 
-    phi_edge = qmc_data.phi_edge
-    dphi = qmc_data.dphi
-    phi_s = qmc_data.phi_s
-    J_avg = qmc_data.J_avg
-    J_edge = qmc_data.J_edge
+    #phi_edge = qmc_data.phi_edge
+    #dphi = qmc_data.dphi
+    #phi_s = qmc_data.phi_s
+    #J_avg = qmc_data.J_avg
+    #J_edge = qmc_data.J_edge
 
     sigt = qmc_data.sigt
     #siga = qmc_data.siga
@@ -49,12 +53,15 @@ function qmc_sweep(phi_avg, qmc_data)
     #q = phi_avg*sigs' + source # multi group data
     q =  phi_avg.*sigs + source # garcia tests and infinite medium problems
     phi_avg = zeros(Nx,G)
-    #skip(rng,N)
-    #skip(rng_bndl,N)
+    phi_edge = zeros(Nx+1,G)
+    dphi = zeros(Nx,G)
+    phi_s = zeros(Nx,G)
+    J_avg = zeros(Nx,G)
+    J_edge = zeros(Nx+1,G)
 
     # initialize random number generator, return NxDim matrix
     totalDim = getDim(Geo, hasLeft, hasRight)
-    rng = rngInit(generator, Geo, N, totalDim)
+    rng = rngInit(generator, N, totalDim)
     # Dim is used to index the rng matrix
     Dim = 1
 
@@ -74,7 +81,7 @@ function qmc_sweep(phi_avg, qmc_data)
             #weight = q[zone,:]/N*cellVolume(Geo, zone, low_edges, high_edges)*Nx
             weight = phi_left./N*surfaceArea(Geo,x).*ones(G)
             #set phi_edge
-            phi_edge[1,:] = phi_left.*ones(G)*surfaceArea(Geo,x)
+            phi_edge[zone,:] = phi_left.*ones(G)#*surfaceArea(Geo,x)
             #total path length across zone
             J_edge[zone,:] += weight
             move_part(  midpoints,mu,x,Nx,high_edges,low_edges,weight,
@@ -104,9 +111,9 @@ function qmc_sweep(phi_avg, qmc_data)
             #compute weight
             weight = phi_right./N*surfaceArea(Geo,x).*ones(G)
             #set phi_edge
-            phi_edge[zone,:] = phi_right.*ones(G)*surfaceArea(Geo,x)
+            phi_edge[zone+1,:] = phi_right.*ones(G)#*surfaceArea(Geo,x)
             #total path length across zone
-            J_edge[zone,:] += weight
+            J_edge[zone+1,:] += weight
             move_part(  midpoints,mu,x,Nx,high_edges,low_edges,weight,
                         phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
                         exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
