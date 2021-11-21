@@ -37,12 +37,16 @@ export getRadius
 export getPath
 export getDim
 export inf_Med_BC_Mu
+export qmc_garcia
+export qmc_infMed
+export qmc_multiGroup
+export qmc_rngComparison
 
+include("functions/qmc_init.jl")
 include("functions/qmc_source_iteration.jl")
 include("functions/qmc_sweep.jl")
 include("functions/move_part.jl")
 include("functions/misc_functions.jl")
-include("functions/qmc_init.jl")
 
 include("tests/garcia.jl")
 include("tests/infinite_medium.jl")
