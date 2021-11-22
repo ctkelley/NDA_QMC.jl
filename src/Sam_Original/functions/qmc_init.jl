@@ -226,10 +226,6 @@ function garcia_init(Geometry, generator, N, LB, RB, Nx, na2, s)
         edges = range(LB, stop=RB, length=Nx+1)
 
         #define angular flux mesh
-        #exit_left_bins data structure to hold the exiting angular flux,
-        #the first column has the bin centers and
-        #and the second holds the values.
-        #exit_right_bins is the same
         dmu = 1/na2
         #right bins
         exit_right_bins = zeros((na2,2))
@@ -240,7 +236,7 @@ function garcia_init(Geometry, generator, N, LB, RB, Nx, na2, s)
         exit_left_bins[:,1] = -1*range(dmu/2, stop = 1- dmu/2, step = dmu)
         exit_left_bins[:,2] .= 0
 
-        sigt = [1]
+        sigt = [1.0]
         G = size(sigt)[1] # number of groups
         sigt = ones(Nx,G).*sigt
         sigt = hcat(sigt)
@@ -270,8 +266,8 @@ function garcia_init(Geometry, generator, N, LB, RB, Nx, na2, s)
             error("Geometry must be: 'Slab', 'Cylinder', or 'Sphere'")
         end
 
-        phi_left = 1
-        phi_right = 0
+        phi_left = [1.0]
+        phi_right = [0.0]
 
         qmc_data = (        Geo = Geo,
                             N = N,

@@ -1,13 +1,24 @@
 
-
-function qmc_garcia()
+"""
+    qmc_garcia(N, Nx, s)
+Function call for Garcia/Siewart problem. Left boundary source
+and spatially dependent scattering cross section, sampled using Sobol Sequence.
+JQSRT (27), 1982 pp 141-148.
+...
+# Arguments
+* `N::Float64`: Number of particles.
+* `Nx::Integer`: number of spatial cells.
+* `s::Integer`: Garcia/Siewert cross section parameter.
+...
+"""
+function qmc_garcia(N=2^11, Nx=40, s=1.0)
     ###############################################################################
     #### Parameters
     ###############################################################################
-    Nx = 50     # number of tally cells
+    #Nx = 50     # number of tally cells
     na2 = 11    # number of angles for angular mesh
-    s = [1]     # parameter in Garcia/Siewert
-    N = 2^15    # number of particles per source itertion
+    s = [s]     # parameter in Garcia/Siewert
+    #N = 2^11    # number of particles per source itertion
     LB = 0      # left bound
     RB = 5      # right bound
     geometry = "Slab"
