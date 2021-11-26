@@ -11,6 +11,7 @@ using PyPlot
 using Printf
 using Sobol
 
+export fprintTeX
 export testgauss
 export sn_angles
 export source_iteration
@@ -26,6 +27,7 @@ export writetab
 export readtab
 export qmc_vs_sn
 export makeqmctab
+export makeqmctex
 export readdata
 export sn_validate
 export qmc_sweep
@@ -59,4 +61,5 @@ include("Tim_QMC/qmc_krylov.jl")
 include("Tim_QMC/ctk_qmc_sweep.jl")
 include("Tim_QMC/ctk_qmc_nda_test.jl")
 include("Tim_QMC/sn_test.jl")
+include("fprintTex.jl")
 end

@@ -52,7 +52,9 @@ linear operator part. This is the mat-vec for GMRES.
 function sn_matvec(f, sn_data)
     kf = copy(f)
     kf = flux_map!(kf, sn_data)
-    kf = f - kf
+    axpy!(-1.0,f,kf)
+    kf .*= -1.0
+#    kf .= f - kf
     return kf
 end
 
