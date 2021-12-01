@@ -42,6 +42,16 @@ export qmc_infMed
 export qmc_multiGroup
 export qmc_rngComparison
 
+export Linear_QMC
+export test2
+export MMul
+export test1
+export TSweep
+export getb
+export EasyInit
+
+
+
 include("functions/qmc_init.jl")
 include("functions/qmc_source_iteration.jl")
 include("functions/qmc_sweep.jl")
@@ -52,5 +62,7 @@ include("tests/garcia.jl")
 include("tests/infinite_medium.jl")
 include("tests/multi_group.jl")
 include("tests/RNG_Comparison.jl")
+
+include("functions/Linear_QMC.jl")
 
 end
