@@ -10,8 +10,8 @@ Siewart problems.
 """
 function qmc_init(Geometry, generator, N, LB, RB, Nx, na2, s, sigs, sigt)
 
-        hasLeft = false
-        hasRight = false
+        hasLeft = true
+        hasRight = true
 
         dx = (RB-LB)/Nx
         #define tally mesh
