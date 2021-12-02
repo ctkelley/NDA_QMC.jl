@@ -4,7 +4,8 @@ function of Nx and N
 
 qmc_vs_sn(levels=6, Nrange=4; s=1.0)
 """
-function qmc_vs_sn(levels=6, Nrange=4; s=1.0, normprint=false)
+function qmc_vs_sn(levels=6, Nrange=4; s=1.0, normprint=false, 
+                   tabprint=makeqmctab)
 NVals=zeros(Int64,Nrange)
 NVals[1]=1000
 for i=2:Nrange
@@ -23,11 +24,9 @@ for idv=1:Nrange
 Vout=validate(NVals[idv], levels, DataGS, s)
 Dcomp[:,idv]=Vout.Diffs
 Rcomp[:,idv]=Vout.RDiff
-#Dcomp[:,idv]=validate(NVals[idv], levels, DataGS, s).Diffs
-#Rcomp[:,idv]=validate(NVals[idv], levels, DataGS, s).RDiff
 end
 normprint && println("Componentwise errors")
-makeqmctab(Dcomp,NVals,NxVals)
+tabprint(Dcomp,NVals,NxVals)
 normprint && println("Relative L2 Errors")
 normprint && makeqmctab(Rcomp,NVals,NxVals)
 return (Dcomp, Rcomp)
@@ -47,6 +46,24 @@ Dval=siewert(s; nx=NVals[idv], na2=80, phiedge=true)
 Dcomp[idv]=norm(Dval-DataGS,Inf)
 end
 return Dcomp
+end
+
+function makeqmctex(Dcomp,NVals,NxVals)
+(md,nd)=size(Dcomp)
+Parray=zeros(md, nd+1)
+Parray[:,1].=NxVals
+Parray[:,2:nd+1].=Dcomp
+levels=length(NxVals)
+Nrange=length(NVals)
+headers=["Nx\\N"]
+for i=1:Nrange
+push!(headers,string(NVals[i]))
+end
+formats="%d "
+for i=1:nd
+formats=string(formats,"& %8.5e")
+end
+fprintTeX(headers,formats,Parray)
 end
 
 

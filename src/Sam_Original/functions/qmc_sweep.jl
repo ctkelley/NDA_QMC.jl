@@ -123,12 +123,13 @@ function qmc_sweep(q, qmc_data)
         y = z = 0
         #compute initial weight
         zone = getZone(x,y,z,low_edges,high_edges)
-        if (any(q[zone,:] .> 1e-12))
-            weight = q[zone,:]/N*cellVolume(Geo, zone, low_edges, high_edges)*Nx
-            move_part(  midpoints,mu,x,Nx,high_edges,low_edges,weight,
-                        phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
-                        exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
-        end
+        #if (any(q[zone,:] .> 1e-12))
+        weight = q[zone,:]/N*cellVolume(Geo, zone, low_edges, high_edges)*Nx
+        #how far does a particle travel when it crosses a zone
+        move_part(  midpoints,mu,x,Nx,high_edges,low_edges,weight,
+                    phi_avg, dphi, phi_edge, phi_s, J_avg, J_edge,sigt,
+                    exit_right_bins,exit_left_bins,c,phi,z,y,Geo)
+        #end
     end
 
     exit_left_bins[:,2] /= dmu
