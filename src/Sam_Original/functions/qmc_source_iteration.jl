@@ -3,13 +3,12 @@
      qmc_source_iteration(s, qmc_data,tol=1.e-8)
  quasi-monte carlo source iteration example script for transport equation.
 """
-function qmc_source_iteration(qmc_data, tol=1.e-5)
+function qmc_source_iteration(qmc_data, tol=1.e-5, maxIter=20)
     # precomputed data
-    N = qmc_data.N
-    Nx = qmc_data.Nx
-    G = qmc_data.G
     phi_avg = qmc_data.phi_avg
     phi_avg_old = qmc_data.phi_avg
+    source = qmc_data.source
+    sigs = qmc_data.sigs
 
     itt = 0
     delflux = 1
@@ -17,12 +16,10 @@ function qmc_source_iteration(qmc_data, tol=1.e-5)
     # initialize global variables
     phi_edge = dphi = J_avg = J_edge = exit_right_bins = exit_left_bins = 0
 
-    sigt = qmc_data.sigt
-    sigs = qmc_data.sigs
-    midpoints = qmc_data.midpoints
-
-    while itt < 20 && delflux > tol
-        phi_avg, phi_edge, dphi, J_avg, J_edge, exit_right_bins, exit_left_bins = qmc_sweep(phi_avg, qmc_data)
+    while itt < maxIter && delflux > tol
+        #q = phi_avg*sigs' + source # multi group data
+        q =  phi_avg.*sigs + source # garcia tests and infinite medium problems
+        phi_avg, phi_edge, dphi, J_avg, J_edge, exit_right_bins, exit_left_bins = qmc_sweep(q, qmc_data)
         delflux = norm(phi_avg - phi_avg_old, Inf)
         itt += 1
         push!(reshist, delflux)

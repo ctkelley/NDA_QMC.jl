@@ -22,7 +22,7 @@ function qmc_garcia(N=2^11, Nx=40, s=1.0)
     LB = 0      # left bound
     RB = 5      # right bound
     geometry = "Slab"
-    generator = "Sobol"
+    generator = "Golden"
 
     ###############################################################################
     #### Function Call
