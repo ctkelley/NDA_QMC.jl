@@ -11,6 +11,7 @@ using PyPlot
 using Printf
 using Sobol
 
+export averop
 export fprintTeX
 export testgauss
 export sn_angles
@@ -62,4 +63,5 @@ include("Tim_QMC/ctk_qmc_sweep.jl")
 include("Tim_QMC/ctk_qmc_nda_test.jl")
 include("Tim_QMC/sn_test.jl")
 include("fprintTex.jl")
+include("averop.jl")
 end

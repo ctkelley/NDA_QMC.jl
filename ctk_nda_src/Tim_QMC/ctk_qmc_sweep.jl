@@ -166,9 +166,13 @@ function qmc_sweep(phi_avg, qmc_data)
     end
 
     # spatial derivative of phi
+    AV = qmc_data.AV
+    cphi=copy(phi_edge)
+    avphi=AV*cphi
     for i in 1:(Nx)
 #    for i in 1:(Nx-1)
-        dphi[i] = phi_edge[i+1] - phi_edge[i]
+#        dphi[i] = phi_edge[i+1] - phi_edge[i]
+        dphi[i] = avphi[i+1] - avphi[i]
     end
 
     dphi ./= (dx)

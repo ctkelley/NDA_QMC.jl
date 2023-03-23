@@ -9,7 +9,7 @@ qmc_nda_data=(qmc_data=qmc_data, nda_data=nda_data)
 #
 phin=zeros(Nx,)
 phiout=ones(Nx,)
-itmax=30
+itmax=100
 itc=0
 ithist=[]
 phidiff=norm(phin-phiout,Inf)
@@ -39,7 +39,7 @@ end
 
 #function avg2edge!(phi_edge, dphi, phi_avg,qmc_nda_data)
 #sn_data=qmc_nda_data.nda_data.sn_data
-function avg2edge!(phi_edge, dphi, phi_avg, dx)
+function avg2edge!(phi_edge, dphi, phi_avg, dx,AVE)
 Nx=length(phi_avg)
 m=length(phi_edge)
 Nx==length(dphi) || error("dphi lives on cell centers")
@@ -49,14 +49,18 @@ for ie=2:Nx
 phi_edge[ie] = .5*(phi_avg[ie-1]+phi_avg[ie])
 end
 phi_edge[Nx+1]=1.5*phi_avg[Nx] - .5*phi_avg[Nx-1]
+cphi=copy(phi_edge)
+aphi=AVE*cphi
 for id=1:Nx
-dphi[id]=(phi_edge[id+1]-phi_edge[id])/dx
+#dphi[id]=(phi_edge[id+1]-phi_edge[id])/dx
+dphi[id]=(aphi[id+1]-aphi[id])/dx
 end
 return (phi_edge=phi_edge, dphi=dphi)
 end
 
 function nda_qmc_fixed(phi,qmc_nda_data)
 qmc_data=qmc_nda_data.qmc_data
+AVE=qmc_data.AV
 nda_data=qmc_nda_data.nda_data
 Nx=length(phi)
 phi_edge=zeros(Nx+1,)
@@ -64,7 +68,7 @@ dphi=zeros(Nx,)
 dx=1.0/Nx
 qout=qmc_sweep(phi,qmc_data)
 #avg2edge!(phi_edge, dphi, qout.phi_avg,qmc_nda_data)
-avg2edge!(phi_edge, dphi, qout.phi_avg, dx)
+avg2edge!(phi_edge, dphi, qout.phi_avg, dx,AVE)
 dhat=(qout.J_avg + (dphi./3.0))./qout.phi_avg
 #println(norm(dhat-dhatp,Inf),"  ",norm(dphi-dphip))
 #

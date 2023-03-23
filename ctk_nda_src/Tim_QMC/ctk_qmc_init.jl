@@ -10,7 +10,9 @@ function qmc_init(N, Nx, na2, s)
     dxs = high_edges - low_edges
     midpoints = 0.5*(high_edges + low_edges)
     edges = range(0, stop=Lx, length=Nx+1)
-
+    p=1
+#    AV=[]
+    AV=averop(p,Nx+1)
     #define angular flux mesh
     #exit_left_bins data structure to hold the exiting angular flux,
     #the first column has the bin centers and the
@@ -42,6 +44,7 @@ function qmc_init(N, Nx, na2, s)
     sigs = sigsFunc(midpoints)
 
     return qmc_data = (
+        AV = AV,
         N = N,
         Nx = Nx,
         Lx = Lx,

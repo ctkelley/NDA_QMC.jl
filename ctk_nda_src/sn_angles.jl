@@ -1,10 +1,10 @@
 """
-sn_angles(na2=20)
+sn_angles(na2=40)
 
 Get double Gauss nodes and weights for SN
-This functions uses FastGaussQuadrature
+This function uses FastGaussQuadrature
 """
-function sn_angles(na2 = 20)
+function sn_angles(na2 = 40)
     na = floor(Int, na2 / 2)
     2 * na == na2 || error("odd number of angles")
     baseangles, baseweights = gausslegendre(na)
