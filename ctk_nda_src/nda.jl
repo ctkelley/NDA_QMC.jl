@@ -33,18 +33,22 @@ na=length(angles);
 psi=sn_data.psi;
 psi=transport_sweep!(psi, phi, sn_data);
 dhat=zeros(nx-1,)
-(dhat, bcl, bcr)  = dhateval!(dhat, psi, sn_data);
+(dhat, bcl, bcr)  = dhateval!(dhat, psi, sn_data, phi);
 Dhat = Diagonal(dhat)
 L2=nda_data.L2
 D1=nda_data.D1
 AV=nda_data.AV
 LT = L2 + (D1*(Dhat * AV))
-PT=D1*(Dhat*AV)
+# Fix LT to respect the boundary conditions
+LT[1,1]=1.0; LT[1,2:nx].=0.0;
+LT[nx,nx]=1.0; LT[nx,1:nx-1].=0.0;
+#PT=D1*(Dhat*AV)
 rhs=zeros(nx,); rhs[1]=bcl; rhs[nx]=bcr;
 phiout=LT\rhs;
+return phiout
 end
 
-function dhateval!(dhat, psi, sn_data)
+function dhateval!(dhat, psi, sn_data, phi)
 weights=sn_data.weights;
 angles=sn_data.angles;
 nx=sn_data.nx;
@@ -53,9 +57,11 @@ hoflux=zeros(nx,);
 hocurrent=zeros(nx,);
 pa=weights.*angles;
 hoflux=(weights' * psi)';
-bcl=hoflux[1];
-bcr=hoflux[nx];
+bcl=hoflux[1]; bcr=hoflux[nx];
+#bcl=(hoflux[1]+hoflux[2])*.5
+#bcr=(hoflux[nx]+hoflux[nx-1])*.5
 hocurrent=(pa' * psi)';
+#println("flux error = ",norm(hoflux-phi,Inf))
 dflux=zeros(nx-1,)
 dhat=zeros(nx-1,)
 phiav=zeros(nx-1,)

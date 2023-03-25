@@ -11,6 +11,7 @@ using PyPlot
 using Printf
 using Sobol
 
+export ndaerr
 export averop
 export fprintTeX
 export testgauss
@@ -43,6 +44,7 @@ export ctk_qmc_nda_test
 export avg2edge!
 export qmc_nda
 export sn_solve
+export sanity
 
 include("validate.jl")
 include("sn_angles.jl")
@@ -64,4 +66,6 @@ include("Tim_QMC/ctk_qmc_nda_test.jl")
 include("Tim_QMC/sn_test.jl")
 include("fprintTex.jl")
 include("averop.jl")
+include("Tim_NDA/sanity.jl")
+include("Tim_NDA/ndaerr.jl")
 end

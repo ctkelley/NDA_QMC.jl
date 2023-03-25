@@ -23,11 +23,11 @@ end
 
 function nda_iteration(nx, na, s=1.0)
 nda_data=nda_init(nx,na,s)
-phi=zeros(nx,)
+phi=zeros(nx)
 delphi=2.0
 itc=1
 maxit=200
-ithist=zeros(maxit,)
+ithist=zeros(maxit)
 while (itc < maxit+1) && (delphi > 1.e-8)
     phiout=nda_fixed(phi,nda_data)
     delphi=norm(phi-phiout,Inf)
@@ -49,10 +49,10 @@ nda_data=nda_init(nx,na,s)
 # Fix the initial iterate if you want decent results.
 #
 phi0=nda_fixed(phi0,nda_data)
-nout=nsoli(Fnda!, phi0, FS, FPS; eta=.5, fixedeta=false,
-              rtol=1.e-8, pdata=nda_data)
-noutb=nsoli(Fnda!, phi0, FS, FPS; eta=.5, fixedeta=false,
-              rtol=1.e-8, lsolver="bicgstab", pdata=nda_data)
+nout=nsoli(Fnda!, phi0, FS, FPS; eta=.1, fixedeta=false,
+              rtol=1.e-10, pdata=nda_data)
+noutb=nsoli(Fnda!, phi0, FS, FPS; eta=.1, fixedeta=false,
+              rtol=1.e-10, lsolver="bicgstab", pdata=nda_data)
 return (nout=nout, noutb=noutb)
 end
     

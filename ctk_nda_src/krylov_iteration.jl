@@ -17,7 +17,11 @@ function krylov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
     #
     # Now set the boundary conditions to zero in the
     # precomputed data. That sets up the linear operator.
+    # We need to save and restore them if we intend to use sn_data for
+    # several solves
     #
+    psi_left_save = copy(sn_data.psi_left)
+    psi_right_save= copy(sn_data.psi_right)
     sn_data.psi_left .*= 0.0
     sn_data.psi_right .*= 0.0
     #
@@ -40,6 +44,8 @@ function krylov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
     solb = bout.sol
     reshistg=gout.reshist
     reshistb=bout.reshist
+    sn_data.psi_right .= psi_right_save
+    sn_data.psi_left .= psi_left_save
     return(sol=sol, solb=solb, reshistg=reshistg, reshistb=reshistb)
 end
 

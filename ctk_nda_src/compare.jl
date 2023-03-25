@@ -23,7 +23,7 @@ function compare(s = 1.0; qmc=false)
     sout = qmc_si(N, nx, na2; s=s, maxit=200)
     fout = sout.sol
     else
-    sout = source_iteration(sn_data, s)
+    sout = source_iteration(sn_data, s, nx)
     fout = sout.flux
     end
     #

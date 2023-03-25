@@ -9,15 +9,14 @@
  JQSRT (27), 1982 pp 141-148.
 
 """
-function source_iteration(sn_data,s,tol=1.e-8)
-    nx = 2001
+function source_iteration(sn_data,s,nx,tol=1.e-8)
     #
     # precomputed data
     #
     angles=sn_data.angles
     weihts=sn_data.weights
     itt = 0
-    delflux = 1
+    delflux = 1.0
     phi = zeros(nx)
     flux = zeros(nx)
     reshist = []

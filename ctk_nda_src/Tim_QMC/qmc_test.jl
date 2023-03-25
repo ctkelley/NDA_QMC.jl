@@ -116,6 +116,9 @@ L2=nda_data.L2
 D1=nda_data.D1
 AV=nda_data.AV
 LT = L2 + (D1*(Dhat * AV))
+# Fix LT to respect the boundary conditions
+LT[1,1]=1.0; LT[1,2:nx].=0.0;
+LT[nx,nx]=1.0; LT[nx,1:nx-1].=0.0;
 bcl=phi_edge[1];
 bcr=phi_edge[Nx+1];
 #bcl=qout.phi_avg[1];

@@ -55,7 +55,9 @@ for id=1:Nx
 #dphi[id]=(phi_edge[id+1]-phi_edge[id])/dx
 dphi[id]=(aphi[id+1]-aphi[id])/dx
 end
-return (phi_edge=phi_edge, dphi=dphi)
+#return (phi_edge=phi_edge, dphi=dphi)
+phi_edge .= aphi
+return (phi_edge=aphi, dphi=dphi)
 end
 
 function nda_qmc_fixed(phi,qmc_nda_data)
@@ -82,6 +84,8 @@ L2=nda_data.L2
 D1=nda_data.D1
 AV=nda_data.AV
 LT = L2 + (D1*(Dhat * AV))
+LT[1,1]=1.0; LT[2:Nx].=0.0;
+LT[Nx,Nx]=1.0; LT[NX,1:Nx-1].=0.0;
 bcl=phi_edge[1];
 bcr=phi_edge[Nx+1];
 #bcl=qout.phi_avg[1];
