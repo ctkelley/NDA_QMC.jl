@@ -11,6 +11,12 @@ using PyPlot
 using Printf
 using Sobol
 
+export sn_flux
+export plot_test
+export cmfd_si
+export cmfd_krylov
+export ftoc
+export ctof
 export ndaerr
 export averop
 export fprintTeX
@@ -58,6 +64,7 @@ include("compare.jl")
 include("nda.jl")
 include("nda_iteration.jl")
 include("siewert.jl")
+include("sn_flux.jl")
 include("Tim_QMC/qmc_nda.jl")
 include("Tim_QMC/ctk_qmc_init.jl")
 include("Tim_QMC/qmc_krylov.jl")
@@ -65,7 +72,9 @@ include("Tim_QMC/ctk_qmc_sweep.jl")
 include("Tim_QMC/ctk_qmc_nda_test.jl")
 include("Tim_QMC/sn_test.jl")
 include("fprintTex.jl")
-include("averop.jl")
+include("Tim_CMFD/averop.jl")
 include("Tim_NDA/sanity.jl")
 include("Tim_NDA/ndaerr.jl")
+include("Tim_CMFD/cmfd.jl")
+include("Tim_CMFD/plot_test.jl")
 end

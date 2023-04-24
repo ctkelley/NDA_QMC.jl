@@ -2,7 +2,7 @@
 qmc_krylov(N=10^4, Nx=100, na2=11; s=1.0)
 Solves the linear system you get from QMC with GMRES.
 """
-function qmc_krylov(N=10^3, Nx=100, na2=11; s=1.0, tol=1.e-10, onlygmres=true)
+function qmc_krylov(N=1024, Nx=128, na2=11; s=1.0, tol=1.e-10, onlygmres=true)
 mdata=mdata_init(N, Nx, na2, s)
 phi0=zeros(Nx,);
 b=mdata.frhs;

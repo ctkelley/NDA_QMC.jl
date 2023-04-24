@@ -10,10 +10,10 @@ function compare(s = 1.0; qmc=false)
     # precomputed data
     #
     if qmc
-    N=1000
+    N=1025
     nx = 100
     else
-    nx = 2001
+    nx = 2049
     sn_data = sn_init(nx, na2, s)
     end
     #

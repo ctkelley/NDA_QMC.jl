@@ -57,7 +57,7 @@ dphi[id]=(aphi[id+1]-aphi[id])/dx
 end
 #return (phi_edge=phi_edge, dphi=dphi)
 phi_edge .= aphi
-return (phi_edge=aphi, dphi=dphi)
+return (phi_edge=phi_edge, dphi=dphi)
 end
 
 function nda_qmc_fixed(phi,qmc_nda_data)
@@ -69,9 +69,11 @@ phi_edge=zeros(Nx+1,)
 dphi=zeros(Nx,)
 dx=1.0/Nx
 qout=qmc_sweep(phi,qmc_data)
-#avg2edge!(phi_edge, dphi, qout.phi_avg,qmc_nda_data)
 avg2edge!(phi_edge, dphi, qout.phi_avg, dx,AVE)
-dhat=(qout.J_avg + (dphi./3.0))./qout.phi_avg
+JAV=AVE*qout.J_edge
+#dhat=(qout.J_avg + (dphi./3.0))./qout.phi_avg
+Javg=.5*(JAV[1:Nx] + JAV[2:Nx+1])
+dhat=(Javg + (dphi./3.0))./qout.phi_avg
 #println(norm(dhat-dhatp,Inf),"  ",norm(dphi-dphip))
 #
 # Something's busted here. My normal code has phi at edges. The
@@ -85,17 +87,21 @@ D1=nda_data.D1
 AV=nda_data.AV
 LT = L2 + (D1*(Dhat * AV))
 LT[1,1]=1.0; LT[2:Nx].=0.0;
-LT[Nx,Nx]=1.0; LT[NX,1:Nx-1].=0.0;
+LT[Nx,Nx]=1.0; LT[Nx,1:Nx-1].=0.0;
 bcl=phi_edge[1];
 bcr=phi_edge[Nx+1];
 #bcl=qout.phi_avg[1];
 #bcr=qout.phi_avg[Nx];
+ravg=AVE*qout.phi_edge;
+#bcl=ravg[1];
+#bcr=ravg[Nx];
 rhs=zeros(Nx+1,)
 rhs[1]=bcl
 rhs[Nx+1]=bcr
+println(bcl,"  ",bcr)
 phiout=LT\rhs
 phiave=.5*(phiout[1:Nx]+phiout[2:Nx+1])
-#phiout=qout.phi_avg
+return phiave
 end
 
 
