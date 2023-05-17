@@ -3,7 +3,6 @@ sn_init(nx, na2, s; siewert=false, phiedge=true)
 
 I pass a named tuple of precomputed and preallocated data to
 all the functions and solvers. 
-
 The input to this is obvious stuff.
 
 nx = number of spatial grid points

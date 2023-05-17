@@ -15,6 +15,7 @@ export sn_flux
 export plot_test
 export cmfd_si
 export cmfd_krylov
+export cmfd_sweep
 export ftoc
 export ctof
 export ndaerr
@@ -51,6 +52,10 @@ export avg2edge!
 export qmc_nda
 export sn_solve
 export sanity
+export sn_verify
+export cmfd_init
+export cmfd_fixed
+export test_cmfd
 
 include("validate.jl")
 include("sn_angles.jl")
@@ -77,4 +82,6 @@ include("Tim_NDA/sanity.jl")
 include("Tim_NDA/ndaerr.jl")
 include("Tim_CMFD/cmfd.jl")
 include("Tim_CMFD/plot_test.jl")
+include("Tim_CMFD/nda_cmfd.jl")
+include("Tim_CMFD/test_cmfd.jl")
 end

@@ -1,5 +1,5 @@
 """
-krlov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
+krylov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
 Solves the transport equation with GMRES and BiCGSTAB
 """
 function krylov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
@@ -12,7 +12,7 @@ function krylov_iteration(sn_data,s,tol=1.e-8; onlygmres=false)
     # First step is apply the fixed point map with the real
     # boundary conditions and zero flux.
     #
-    rhs = zeros(nx,)
+    rhs = zeros(nx)
     rhs = flux_map!(rhs, sn_data)
     #
     # Now set the boundary conditions to zero in the

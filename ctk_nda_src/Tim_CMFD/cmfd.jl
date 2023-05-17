@@ -59,7 +59,7 @@ ctof(phi_c,phi_f)
 #
 qmc_data=cmfd_data.qmc_data
 qmc_out=qmc_sweep(phi_f, qmc_data)
-phi_f = qmc_out.phi_avg
+phi_f .= qmc_out.phi_avg
 #
 # Map output flux and current to coarse mesh
 #
@@ -90,8 +90,11 @@ end
 function cmfd_init(N, Nx, Nc, na2, s)
 phi_f = zeros(Nx)
 J_c = zeros(Nc)
+sn_data=sn_init(Nx+1, 2*na2, s)
 qmc_data = qmc_init(N, Nx, na2, s);
-return(phi_f=phi_f, J_c = J_c, qmc_data=qmc_data)
+nda_data=nda_cmfd_init(Nx, Nc, 2*na2, s)
+return(phi_f=phi_f, J_c = J_c, qmc_data=qmc_data, sn_data=nda_data.sn_data, 
+       nda_data=nda_data)
 end
 
 function linop_init(Nc, cmfd_data)

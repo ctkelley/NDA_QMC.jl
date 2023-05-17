@@ -14,7 +14,7 @@ function source_iteration(sn_data,s,nx,tol=1.e-8)
     # precomputed data
     #
     angles=sn_data.angles
-    weihts=sn_data.weights
+    weights=sn_data.weights
     itt = 0
     delflux = 1.0
     phi = zeros(nx)
