@@ -118,18 +118,18 @@ function qmc_sweep(phi_avg, qmc_data)
     exit_left_bins[:,2] .= 0
     exit_right_bins[:,2] .= 0
 
-    phi_edge = qmc_data.phi_edge
-    dphi = qmc_data.dphi
-    phi_s = qmc_data.phi_s
-    J_avg = qmc_data.J_avg
-    J_edge = qmc_data.J_edge
-
     sigt = qmc_data.sigt
     source = qmc_data.source
     sigs = qmc_data.sigs
     c = qmc_data.c
     q = phi_avg.*sigs .+ source
+                                
     phi_avg = zeros(Nx)
+    J_avg = zeros(Nx)
+    J_edge = zeros(Nx+1)
+    dphi = zeros(Nx)
+    phi_edge = zeros(Nx+1)
+    phi_s = zeros(Nx)
 
     #initialize sobol sequence
     rng = SobolSeq(2)
