@@ -24,7 +24,9 @@ println("Flux error = ",norm(phi_ct - sol,Inf),"  ",
 phi_sn = zeros(Nc)
 s=1.0
 phi_sn = sn_verify(Nx, Nc, s)
-println(norm(sol-phi_sn, Inf))
+figure(3)
+plot(x,sol-phi_ct)
+println(norm(sol-phi_sn)/sqrt(Nc))
 end
 
 function cmfd_parts(sol, J_c, dx)

@@ -1,12 +1,24 @@
 function test_cmfd(Nc=64)
 N=4096*4; Nx=1024; na2=11; s=1.0;
+#N=4096*2; Nx=1024; na2=11; s=Inf;
+tau=5.0; dx=tau/Nc; x=.5*dx:dx:tau-.5*dx
 cmfd_data=cmfd_init(N, Nx, Nc, na2, s);
 phi0=zeros(Nc);
 phic=copy(phi0)
-for itc=1:10
+reshist=Float64[]
+plotit=false
+itc=0
+resid=1.0
+while (itc < 100) && (resid > 1.e-11)
+itc+=1
     phip=cmfd_fixed(phic, cmfd_data)
+resid=norm(phip-phic,Inf)
+push!(reshist,resid)
+if plotit && itc <=10
 println(norm(phip-phic,Inf),"   ",phip[end],"  ",phip[end-1],"  ",phip[end-2])
-    phic .= phip
-plot(phip)
+plot(x,phip)
 end
+    phic .= phip
+end
+return (solution=phic, history=reshist)
 end

@@ -58,6 +58,10 @@ ctof(phi_c,phi_f)
 # Do Sam's QMC sweep
 #
 qmc_data=cmfd_data.qmc_data
+#
+# Is this the thing to do?
+# qmc_out.J_avg .*= 0.0
+#
 qmc_out=qmc_sweep(phi_f, qmc_data)
 phi_f .= qmc_out.phi_avg
 #

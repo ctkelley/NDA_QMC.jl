@@ -1,11 +1,28 @@
-"""
-Fcmfd!(FS, phi, nda_data)
+""" 
+Fcmfd!(FS, phi, cmfd_data) 
+Nonlinear equation form of NDA equations 
+""" 
+function Fcmfd!(FS, phi,cmfd_data) 
+FS.=phi-cmfd_fixed(phi,cmfd_data) 
+return FS 
+end
 
-Nonlinear equation form of NDA equations
-"""
-function Fcmfd!(FS, phi,nda_data)
-FS.=phi-cmfd_fixed(phi,nda_data)
-return FS
+function cmfd_nsoli(Nc=64)
+FS=zeros(Nc,)
+FPS=zeros(Nc,10)
+phi0=zeros(Nc,)
+N=4096*4; Nx=1024; na2=11; s=1.0;
+cmfd_data=cmfd_init(N, Nx, Nc, na2, s);
+#
+# Fix the initial iterate if you want decent results.
+#
+phi0=cmfd_fixed(phi0,cmfd_data)
+nout=nsoli(Fcmfd!, phi0, FS, FPS; eta=.1, fixedeta=false,
+              rtol=1.e-10, pdata=cmfd_data)
+#noutb=nsoli(Fcmfd!, phi0, FS, FPS; eta=.1, fixedeta=false,
+#              rtol=1.e-10, lsolver="bicgstab", pdata=cmfd_data)
+#return (nout=nout, noutb=noutb)
+return nout
 end
 
 
@@ -31,8 +48,8 @@ nc=length(phi_in); dx=5.0/nc
 #
 phi=copy(phi_in)
 phic=copy(phi_in)
-#(phi, J) = cmfd_sweep(phic, cmfd_data)
-(phi, J) = sn_sweep(phic, cmfd_data)
+(phi, J) = cmfd_sweep(phic, cmfd_data)
+#(phi, J) = sn_sweep(phic, cmfd_data)
 #bcl=phi[1]; bcr=phi[nc];
 bcl=1.5*phi[1]-.5*phi[2]
 bcr=1.5*phi[nc]-.5*phi[nc-1]

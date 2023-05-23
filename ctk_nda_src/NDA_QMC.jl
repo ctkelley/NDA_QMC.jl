@@ -11,6 +11,7 @@ using PyPlot
 using Printf
 using Sobol
 
+export cmfd_nsoli
 export sn_flux
 export plot_test
 export cmfd_si
