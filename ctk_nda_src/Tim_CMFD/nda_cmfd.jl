@@ -7,16 +7,16 @@ FS.=phi-cmfd_fixed(phi,cmfd_data)
 return FS 
 end
 
-function cmfd_nsoli(Nc=64)
+function cmfd_nsoli(Nc=64; s=1.0)
 FS=zeros(Nc,)
-FPS=zeros(Nc,10)
+FPS=zeros(Nc,20)
 phi0=zeros(Nc,)
-N=4096*4; Nx=1024; na2=11; s=1.0;
+N=4096*4; Nx=1024; na2=11;
 cmfd_data=cmfd_init(N, Nx, Nc, na2, s);
 #
 # Fix the initial iterate if you want decent results.
 #
-phi0=cmfd_fixed(phi0,cmfd_data)
+phi0.=cmfd_fixed(phi0,cmfd_data)
 nout=nsoli(Fcmfd!, phi0, FS, FPS; eta=.1, fixedeta=false,
               rtol=1.e-10, pdata=cmfd_data)
 #noutb=nsoli(Fcmfd!, phi0, FS, FPS; eta=.1, fixedeta=false,

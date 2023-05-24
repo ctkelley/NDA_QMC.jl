@@ -11,6 +11,8 @@ using PyPlot
 using Printf
 using Sobol
 
+export result_quality
+export compare_cmfd
 export cmfd_nsoli
 export sn_flux
 export plot_test
@@ -85,4 +87,6 @@ include("Tim_CMFD/cmfd.jl")
 include("Tim_CMFD/plot_test.jl")
 include("Tim_CMFD/nda_cmfd.jl")
 include("Tim_CMFD/test_cmfd.jl")
+include("Tim_CMFD/compare_cmfd.jl")
+include("Tim_CMFD/result_quality.jl")
 end
