@@ -1,12 +1,13 @@
 """
-qmc_krylov(N=10^4, Nx=100, na2=11; s=1.0)
+qmc_krylov(N=10^4, Nx=100, na2=11; s=1.0, tau=5.0)
 Solves the linear system you get from QMC with GMRES.
 """
-function qmc_krylov(N=1024, Nx=128, na2=11; s=1.0, tol=1.e-10, onlygmres=true)
-mdata=mdata_init(N, Nx, na2, s)
+function qmc_krylov(N=1024, Nx=128, na2=11; 
+          s=1.0, tol=1.e-10, onlygmres=true, tau=5.0)
+mdata=mdata_init(N, Nx, na2, s; tau=tau)
 phi0=zeros(Nx,);
 b=mdata.frhs;
-V=zeros(Nx,20)
+V=zeros(Nx,80)
 eta=tol
 #
 # kl_gmres and kl_bicgstab solve the problem.
@@ -38,11 +39,12 @@ end
 
 
 """
-qmc_si(N=10^4, Nx=100, na2=11; s=1.0, tol=1.e-8, maxit=100)
+qmc_si(N=10^4, Nx=100, na2=11; tau=5.0, s=1.0, tol=1.e-8, maxit=100)
 Source iteration using QMC. Nothing magic here.
 """
-function qmc_si(N=10^4, Nx=100, na2=11; s=1.0, tol=1.e-8, maxit=100)
-qmc_data=qmc_init(N, Nx, na2, s)
+function qmc_si(N=10^4, Nx=100, na2=11; 
+s=1.0, tol=1.e-8, maxit=100)
+qmc_data=qmc_init(N, Nx, na2, s; tau=tau)
 phic=zeros(Nx,);
 delflux=1.0
 reshist=[]
@@ -86,9 +88,9 @@ Collects the precomputed data for QMC and does a sweep with
 zero boundary data to get the right hand side for the linear
 equation forumlation.
 """
-function mdata_init(N, Nx, na2, s)
+function mdata_init(N, Nx, na2, s; tau=5.0)
 # Precomputed data
-qmc_data = qmc_init(N, Nx, na2, s);
+qmc_data = qmc_init(N, Nx, na2, s; Lx=tau);
 # Sweep with zero RHS
 phizero=zeros(Nx,);
 nullout=qmc_sweep(phizero,qmc_data);

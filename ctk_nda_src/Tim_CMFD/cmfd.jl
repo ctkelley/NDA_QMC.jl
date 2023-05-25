@@ -22,13 +22,14 @@ end
 
 
 """
-cmfd_krylov(N=4096*4, Nx=512, Nc=64, na2=11; s=1.0, tol=1.e-10)
+cmfd_krylov(N=4096*4, Nx=512, Nc=64, na2=11; s=1.0, tol=1.e-10, tau=5.0)
 Solves the linear system you get from CMFD with GMRES.
 """
-function cmfd_krylov(N=4096*4, Nx=512, Nc=64, na2=11; s=1.0, tol=1.e-10)
+function cmfd_krylov(N=4096*4, Nx=512, Nc=64, na2=11; s=1.0, 
+                  tol=1.e-10, tau=5.0)
 phi_c = zeros(Nc)
 phi_c0 = zeros(Nc)
-cmfd_data=cmfd_init(N, Nx, Nc, na2, s)
+cmfd_data=cmfd_init(N, Nx, Nc, na2, s; tau=tau)
 linop_data=linop_init(Nc, cmfd_data)
 b=linop_data.frhs
 V=zeros(Nc,20)
@@ -91,14 +92,14 @@ return Mprod
 end
 
 
-function cmfd_init(N, Nx, Nc, na2, s)
+function cmfd_init(N, Nx, Nc, na2, s; tau=5.0)
 phi_f = zeros(Nx)
 J_c = zeros(Nc)
-sn_data=sn_init(Nx+1, 2*na2, s)
-qmc_data = qmc_init(N, Nx, na2, s);
-nda_data=nda_cmfd_init(Nx, Nc, 2*na2, s)
+sn_data=sn_init(Nx+1, 2*na2, s; tau=tau)
+qmc_data = qmc_init(N, Nx, na2, s; Lx = tau);
+nda_data=nda_cmfd_init(Nx, Nc, 2*na2, s; tau=tau)
 return(phi_f=phi_f, J_c = J_c, qmc_data=qmc_data, sn_data=nda_data.sn_data, 
-       nda_data=nda_data)
+       nda_data=nda_data, tau=tau)
 end
 
 function linop_init(Nc, cmfd_data)

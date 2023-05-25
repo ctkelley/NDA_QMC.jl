@@ -7,12 +7,13 @@ FS.=phi-cmfd_fixed(phi,cmfd_data)
 return FS 
 end
 
-function cmfd_nsoli(Nc=64; s=1.0)
+function cmfd_nsoli(N=4096*4, Nx=1024, Nc=64; s=1.0, tau=5.0)
 FS=zeros(Nc,)
 FPS=zeros(Nc,20)
 phi0=zeros(Nc,)
-N=4096*4; Nx=1024; na2=11;
-cmfd_data=cmfd_init(N, Nx, Nc, na2, s);
+#N=4096*4; Nx=1024; 
+na2=11;
+cmfd_data=cmfd_init(N, Nx, Nc, na2, s; tau=tau);
 #
 # Fix the initial iterate if you want decent results.
 #
@@ -42,7 +43,8 @@ function cmfd_fixed(phi_in, cmfd_data)
 # Solve high order problem
 #
 qmc_data=cmfd_data.qmc_data
-nc=length(phi_in); dx=5.0/nc
+tau=cmfd_data.tau
+nc=length(phi_in); dx=tau/nc
 #
 # we get the cell average flux, so convert to cell edges
 #
@@ -83,8 +85,8 @@ phiout=copy(phi)
 return phiout
 end
 
-function nda_cmfd_init(nx, nc, na2, s)
-sn_data=sn_init(nc+1, na2, s)
+function nda_cmfd_init(nx, nc, na2, s; tau=5.0)
+sn_data=sn_init(nc+1, na2, s; tau=tau)
 dx=sn_data.dx
 c=sn_data.c
 nout=cmfdD2(nc+1,dx,c)

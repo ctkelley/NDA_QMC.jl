@@ -1,8 +1,8 @@
 using Sobol
 
-function qmc_init(N, Nx, na2, s)
+function qmc_init(N, Nx, na2, s; Lx = 5.0)
 
-    Lx = 5.0
+#    Lx = 5.0
     dx = Lx/Nx
     #define tally mesh
     low_edges = range(0, stop=Lx-dx, length=Nx)

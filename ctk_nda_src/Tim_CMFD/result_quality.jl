@@ -1,13 +1,13 @@
-function result_quality(Nc = 64)
+function result_quality(Nc = 64; tau=5.0)
 na2=11
 Nx=512
-dx=5.0/Float64(Nc)
+dx=tau/Float64(Nc)
 x=.5*dx:dx:5.0-.5*dx
 sol=zeros(Nc,3)
 N=[1024, 2048, 4096]
 #N *= 4
 for in=1:3
-nout=cmfd_krylov(N[in], Nx, Nc, na2)
+nout=cmfd_krylov(N[in], Nx, Nc, na2; tau=tau)
 sol[:,in]=nout.sol
 end
 plot(x,sol[:,1],"k-",x,sol[:,2],"k--",x,sol[:,3],"k-.")
